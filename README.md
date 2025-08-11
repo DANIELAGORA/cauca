@@ -18,3 +18,8 @@
 
 **Desarrollado por Daniel Lopez "DSimnivaciones" Wramba**  
 *Movimiento Alternativo Indígena y Social - MAIS*
+
+## 🔥 AUTO-DEPLOY ACTIVATED
+Site ID: fa8b1d78-6aff-4bcd-96bf-de490e8179be  
+GitHub Actions ➜ Netlify ➜ Production  
+Updated: $(date)
