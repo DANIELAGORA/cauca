@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../contexts/AppContext';
+import { metricasActuales, municipiosMAIS, getMetricasPorNivel } from '../../data/estructura-jerarquica';
 import { MetricsGrid } from '../widgets/MetricsGrid';
 import { ChartWidget } from '../widgets/ChartWidget';
 import { MessageCenter } from '../widgets/MessageCenter';
@@ -33,39 +34,48 @@ const itemVariants = {
 
 export const NationalDashboard: React.FC = () => {
   const { state } = useApp();
+  const [metricas, setMetricas] = useState(metricasActuales);
+
+  useEffect(() => {
+    // Cargar métricas reales del nivel nacional
+    const metricasNivel = getMetricasPorNivel('comite-ejecutivo-nacional');
+    if (metricasNivel) {
+      setMetricas(metricasNivel);
+    }
+  }, []);
 
   const nationalMetrics = [
     {
-      title: 'Regiones Activas',
-      value: state.analytics?.territory?.length.toString() || '0',
-      change: '+X esta semana', 
-      icon: MapPin,
+      title: 'Concejales Electos',
+      value: metricas.concejalesTotales.toString(),
+      change: `+${metricas.concejalesTotales} en período`, 
+      icon: Crown,
       color: 'text-green-600',
       bgColor: 'bg-green-100'
     },
     {
-      title: 'Departamentos',
-      value: state.analytics?.territory?.length.toString() || '0', 
-      change: 'Cobertura 100%',
-      icon: Users,
+      title: 'Municipios MAIS',
+      value: metricas.municipiosConPresencia.toString(), 
+      change: 'Cauca consolidado',
+      icon: MapPin,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100'
     },
     {
-      title: 'Candidatos Activos',
-      value: state.analytics?.campaigns?.length.toString() || '0', 
-      change: '+X% vs mes anterior', 
+      title: 'Proyectos Legislativos',
+      value: metricas.proyectosPresentados.toString(), 
+      change: `${Math.round(metricas.proyectosPresentados/metricas.concejalesTotales)} promedio por concejal`, 
       icon: Megaphone,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100'
     },
     {
-      title: 'Alertas Críticas',
-      value: '0', 
-      change: 'Requieren atención',
-      icon: AlertTriangle,
-      color: 'text-red-600',
-      bgColor: 'bg-red-100'
+      title: 'Ciudadanos Atendidos',
+      value: metricas.ciudadanosAtendidos.toString(), 
+      change: 'Impacto territorial real',
+      icon: Users,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-100'
     }
   ];
 
@@ -151,6 +161,31 @@ export const NationalDashboard: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Concejales Activos */}
+      <motion.div variants={itemVariants}>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+            <Users className="h-6 w-6 text-red-600 mr-2" />
+            Concejales MAIS Electos - Cauca
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {municipiosMAIS.map((municipio, index) => (
+              <div key={index} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold text-gray-900">{municipio.nombre}</h4>
+                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                    Activo
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 font-medium mb-1">{municipio.concejal}</p>
+                <p className="text-xs text-gray-500">{municipio.telefono}</p>
+                <p className="text-xs text-gray-600">{municipio.contacto}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
 
       {/* Territory Overview */}
       <motion.div variants={itemVariants}>
