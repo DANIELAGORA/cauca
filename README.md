@@ -1,6 +1,6 @@
 # 🚀 MAIS Political PWA - PRODUCTION LIVE
 
-**URL de Producción:** https://effulgent-croissant-951287.netlify.app
+**URL de Producción:** https://maiscauca.netlify.app
 
 ✅ **Auto-deploy activo desde GitHub**  
 ✅ **Supabase PostgreSQL con datos reales**  
