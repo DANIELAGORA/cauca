@@ -8,6 +8,7 @@ import { CandidateDashboard } from './dashboards/CandidateDashboard';
 import { InfluencerDashboard } from './dashboards/InfluencerDashboard';
 import { LeaderDashboard } from './dashboards/LeaderDashboard';
 import { VoterDashboard } from './dashboards/VoterDashboard';
+import { ConcejalDashboard } from './dashboards/ConcejalDashboard';
 
 export const Dashboard: React.FC = () => {
   const { state } = useApp();
@@ -37,6 +38,8 @@ export const Dashboard: React.FC = () => {
       return <InfluencerDashboard />;
     case 'lider':
       return <LeaderDashboard />;
+    case 'concejal':
+      return <ConcejalDashboard />;
     case 'votante':
       return <VoterDashboard />;
     default:

@@ -141,6 +141,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                 <option value="lider">Líder Comunitario</option>
                 <option value="influenciador">Influenciador Digital</option>
                 <option value="candidato">Candidato</option>
+                <option value="concejal">Concejal Municipal</option>
                 <option value="comite-departamental">Comité Departamental</option>
                 <option value="lider-regional">Líder Regional</option>
                 <option value="comite-ejecutivo-nacional">Comité Ejecutivo Nacional</option>

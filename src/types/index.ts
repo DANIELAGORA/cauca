@@ -5,6 +5,7 @@ export type UserRole =
   | 'candidato'
   | 'influenciador'
   | 'lider'
+  | 'concejal'
   | 'votante';
 
 export interface User {
@@ -14,6 +15,10 @@ export interface User {
   name: string;
   region?: string;
   department?: string;
+  municipality?: string;
+  phone?: string;
+  position?: string;
+  election_date?: string;
   permissions?: string[];
   lastActivity?: Date;
   joinedAt?: Date;
@@ -21,6 +26,7 @@ export interface User {
   isActive?: boolean;
   isRealUser?: boolean;
   canCreateRoles?: boolean;
+  metadata?: Record<string, any>;
 }
 
 export interface Message {

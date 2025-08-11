@@ -142,7 +142,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       
       try {
         const { data, error } = await supabase
-          .from('profiles')
+          .from('user_profiles')
           .select('*')
           .eq('id', userId)
           .single();
@@ -151,7 +151,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           profile = data;
         }
       } catch (err) {
-        logInfo('Profiles table not found, using temporary profile');
+        logInfo('User profiles table not found, using temporary profile');
       }
 
       // Get user email from auth
@@ -163,11 +163,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           email: user.email || '',
           name: profile?.name || user.email?.split('@')[0] || 'Usuario',
           role: profile?.role as UserRole || 'votante',
-          region: profile?.region,
+          region: profile?.region || profile?.municipality,
           department: profile?.department,
+          municipality: profile?.municipality,
+          phone: profile?.phone,
+          position: profile?.position,
+          election_date: profile?.election_date,
           isRealUser: true,
           isActive: true,
           lastActive: new Date(),
+          metadata: profile?.metadata || {},
         };
         
         dispatch({ type: 'SET_USER', payload: userProfile });
@@ -397,7 +402,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         // Try to create profile if table exists
         try {
           const { error: profileError } = await supabase
-            .from('profiles')
+            .from('user_profiles')
             .insert({
               id: data.user.id,
               name: userData.name,
@@ -410,7 +415,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             logInfo('Profile creation failed, but signup succeeded');
           }
         } catch (err) {
-          logInfo('Profiles table not available, user created without profile');
+          logInfo('User profiles table not available, user created without profile');
         }
       }
 
