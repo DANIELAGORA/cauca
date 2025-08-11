@@ -47,4 +47,4 @@ jobs:
       - name: ✅ Deployment complete
         run: |
           echo "🎉 MAIS PWA deployed successfully!"
-          echo "🌐 Site URL: https://effulgent-croissant-951287.netlify.app"
+          echo "🌐 Site URL: https://maiscauca.netlify.app"
