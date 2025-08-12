@@ -154,9 +154,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-yellow-50 to-green-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-blue-100">
+      <header className="bg-white shadow-sm border-b border-red-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -170,7 +170,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
             </div>
             <button
               onClick={onAccessClick}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
             >
               <span>Acceso Sistema</span>
               <ChevronRight className="w-4 h-4" />
@@ -189,7 +189,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
           >
             <h2 className="text-5xl font-bold text-gray-900 mb-6">
               Centro de Mando Político
-              <span className="block text-blue-600 mt-2">MAIS Cauca</span>
+              <span className="block text-red-600 mt-2">MAIS Cauca</span>
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
               Plataforma tecnológica integral para la gestión política del Movimiento Alternativo 
@@ -199,13 +199,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={onAccessClick}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
               >
                 Acceder al Sistema
               </button>
               <a
                 href="#concejales"
-                className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-lg font-medium transition-colors"
+                className="border border-red-600 text-red-600 hover:bg-red-50 px-8 py-3 rounded-lg font-medium transition-colors"
               >
                 Ver Concejales Electos
               </a>
@@ -234,9 +234,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-gradient-to-br from-blue-50 to-green-50 p-6 rounded-xl border border-blue-100 hover:shadow-lg transition-shadow"
+                className="bg-gradient-to-br from-red-50 via-yellow-50 to-green-50 p-6 rounded-xl border border-red-100 hover:shadow-lg transition-shadow"
               >
-                <div className="text-blue-600 mb-4">{feature.icon}</div>
+                <div className="text-red-600 mb-4">{feature.icon}</div>
                 <h4 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h4>
                 <p className="text-gray-600">{feature.description}</p>
               </motion.div>
@@ -246,7 +246,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
       </section>
 
       {/* Electos Section */}
-      <section id="concejales" className="py-20 bg-gradient-to-br from-blue-50 to-green-50">
+      <section id="concejales" className="py-20 bg-gradient-to-br from-yellow-50 via-green-50 to-red-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">
@@ -352,13 +352,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
             <h3 className="text-3xl font-bold text-gray-900 mb-8">
               Liderazgo Departamental
             </h3>
-            <div className="bg-gradient-to-r from-blue-600 to-green-600 p-8 rounded-2xl text-white max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-red-600 via-yellow-600 to-green-600 p-8 rounded-2xl text-white max-w-2xl mx-auto">
               <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full mx-auto mb-6 flex items-center justify-center">
                 <Users className="w-12 h-12" />
               </div>
               <h4 className="text-2xl font-bold mb-2">José Luis Diago</h4>
               <p className="text-lg mb-4">Director Departamental - Cauca</p>
-              <p className="text-blue-100">
+              <p className="text-yellow-100">
                 Líder de la estructura territorial del MAIS en el Cauca, coordinando 
                 las actividades políticas y sociales en todos los municipios del departamento.
               </p>
@@ -368,17 +368,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-green-600">
+      <section className="py-20 bg-gradient-to-r from-red-600 via-yellow-600 to-green-600">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h3 className="text-3xl font-bold text-white mb-6">
             ¿Eres militante o simpatizante del MAIS?
           </h3>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-yellow-100 mb-8">
             Únete a nuestra plataforma digital y sé parte activa del cambio político en el Cauca
           </p>
           <button
             onClick={onAccessClick}
-            className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-bold text-lg transition-colors inline-flex items-center space-x-2"
+            className="bg-white text-red-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-bold text-lg transition-colors inline-flex items-center space-x-2"
           >
             <span>Acceder al Sistema AgoraMais</span>
             <ChevronRight className="w-5 h-5" />
