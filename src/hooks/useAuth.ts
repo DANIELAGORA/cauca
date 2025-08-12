@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '../contexts/AppContext';
+import { supabase } from '../lib/supabase';
 
 export interface UseAuthReturn {
   user: User | null;
