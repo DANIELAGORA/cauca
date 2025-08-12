@@ -34,6 +34,7 @@
     "discover:structure": "tsx scripts/discover-table-structure.ts",
     "final:setup": "tsx scripts/final-working-setup.ts",
     "bypass:rls": "tsx scripts/bypass-rls-test.ts",
+    "fix:credentials": "tsx scripts/fix-all-credentials.ts",
     "test:production": "npm run check:database && npm run setup:users && npm run test:users"
   },
   "dependencies": {

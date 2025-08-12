@@ -4,7 +4,7 @@ import { AuthForm } from './components/AuthForm';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { LandingPage } from './components/LandingPage';
-import { PWAInstallPrompt } from './components/PWAInstallPrompt';
+import { PWAInstallBanner } from './components/PWAInstallBanner';
 import { logInfo } from './utils/logger';
 
 const LoadingScreen: React.FC = () => (
@@ -67,7 +67,7 @@ const AppContent: React.FC = () => {
         <Layout>
           <Dashboard />
         </Layout>
-        <PWAInstallPrompt />
+        <PWAInstallBanner />
       </>
     );
   }
@@ -79,7 +79,7 @@ const AppContent: React.FC = () => {
   return (
     <>
       <LandingPage onAccessClick={handleShowAuth} />
-      <PWAInstallPrompt />
+      <PWAInstallBanner />
     </>
   );
 };

@@ -23,7 +23,7 @@ const usuariosPrueba = [
     expectedDashboard: 'DepartmentalDashboard'
   },
   {
-    email: 'chate08@gmail.com',
+    email: 'gelmischate@maiscauca.com',
     password: 'agoramais2025',
     role: 'alcalde',
     name: 'Gelmis Chate Rivera',
@@ -39,10 +39,10 @@ const usuariosPrueba = [
     expectedDashboard: 'ConcejalDashboard'
   },
   {
-    email: 'testdiputado@maiscauca.com',
+    email: 'carlosandres@maiscauca.com',
     password: 'agoramais2025',
     role: 'diputado-asamblea',
-    name: 'Diputado Test',
+    name: 'Carlos Andrés Muñoz',
     municipality: 'Popayán',
     expectedDashboard: 'RegionalDashboard'
   }
