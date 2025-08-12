@@ -1,0 +1,8 @@
+ICON UPDATE FORCE: 2024-08-12-00:20 - ALL ICONS REPLACED WITH APP.ICO/APP.PNG
+favicon.ico: 58029 bytes (was 6e276f021da6744d660e2f49f64dd47b)
+favicon.png: 29666 bytes (updated)
+apple-touch-icon.png: 29666 bytes (updated)
+icon-192x192.png: 29666 bytes (updated)  
+icon-512x512.png: 29666 bytes (updated)
+
+Cache busting v2 with aggressive headers and unique ETags
