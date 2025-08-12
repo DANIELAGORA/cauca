@@ -180,11 +180,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        const userRole = (profile?.role as UserRole) || 'ciudadano-base';
+        // Map Supabase roles to UI roles
+        const roleMapping: Record<string, UserRole> = {
+          'comite-ejecutivo-nacional': 'director-departamental',
+          'lider-regional': 'diputado-asamblea', 
+          'comite-departamental': 'director-departamental',
+          'candidato': 'alcalde',
+          'votante': 'ciudadano-base'
+        };
+        
+        const supabaseRole = profile?.role || 'votante';
+        const userRole = roleMapping[supabaseRole] || 'ciudadano-base';
+        
         const userProfile: User = {
           id: userId,
           email: user.email || '',
-          name: profile?.name || user.email?.split('@')[0] || 'Usuario',
+          name: profile?.full_name || user.email?.split('@')[0] || 'Usuario',
           role: userRole,
           hierarchyLevel: HIERARCHY_LEVELS[userRole] || 10,
           canCreateRoles: getRolesUserCanCreate(userRole),
@@ -216,20 +227,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const { data: messages, error: messagesError } = await supabase
           .from('messages')
           .select('*')
-          .order('timestamp', { ascending: false })
+          .order('created_at', { ascending: false })
           .limit(100);
 
         if (!messagesError && messages) {
-          const formattedMessages: Message[] = messages.map(msg => ({
-            id: msg.id,
-            senderId: msg.sender_id,
-            senderRole: msg.sender_role as UserRole,
-            content: msg.content,
-            type: msg.type as 'direct' | 'broadcast' | 'hierarchical',
-            timestamp: new Date(msg.timestamp),
-            priority: msg.priority as 'low' | 'medium' | 'high' | 'urgent',
-            readBy: msg.read_by || [],
-          }));
+          const formattedMessages: Message[] = messages.map(msg => {
+            // Map Supabase role to UI role for display
+            const roleMapping: Record<string, UserRole> = {
+              'comite-ejecutivo-nacional': 'director-departamental',
+              'lider-regional': 'diputado-asamblea',
+              'comite-departamental': 'director-departamental', 
+              'candidato': 'alcalde',
+              'votante': 'ciudadano-base'
+            };
+            
+            return {
+              id: msg.id,
+              senderId: msg.sender_id,
+              senderRole: roleMapping[msg.role_target] || 'ciudadano-base',
+              content: msg.content,
+              type: (msg.message_type === 'announcement' ? 'broadcast' : 'direct') as 'direct' | 'broadcast' | 'hierarchical',
+              timestamp: new Date(msg.created_at),
+              priority: (msg.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
+              readBy: [],
+            };
+          });
           dispatch({ type: 'SET_MESSAGES', payload: formattedMessages });
         } else {
           dispatch({ type: 'SET_MESSAGES', payload: [] });
@@ -244,17 +266,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const { data: databases, error: databasesError } = await supabase
           .from('databases')
           .select('*')
-          .order('upload_date', { ascending: false });
+          .order('created_at', { ascending: false });
 
         if (!databasesError && databases) {
           const formattedDatabases: DatabaseEntry[] = databases.map(db => ({
             id: db.id,
-            type: db.type as 'excel' | 'image' | 'document',
-            name: db.name,
-            uploadedBy: db.uploaded_by,
-            uploadDate: new Date(db.upload_date),
-            territory: db.territory,
-            category: db.category,
+            type: (db.file_type?.includes('image') ? 'image' : 
+                   db.file_type?.includes('excel') || db.file_type?.includes('sheet') ? 'excel' : 
+                   'document') as 'excel' | 'image' | 'document',
+            name: db.file_name,
+            uploadedBy: db.user_id,
+            uploadDate: new Date(db.created_at),
+            territory: '',
+            category: db.category || 'general',
             metadata: db.metadata || {},
           }));
           dispatch({ type: 'SET_DATABASE_ENTRIES', payload: formattedDatabases });
@@ -428,22 +452,27 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       if (data.user) {
         // Try to create profile if table exists
         try {
+          // Map UI roles to Supabase ENUM roles
+          const uiToSupabaseRoles: Record<UserRole, string> = {
+            'director-departamental': 'comite-departamental',
+            'alcalde': 'candidato',
+            'diputado-asamblea': 'lider-regional', 
+            'concejal': 'votante',
+            'ciudadano-base': 'votante',
+            'lider-comunitario': 'votante',
+            'influenciador-digital': 'votante'
+          };
+          
+          const supabaseRole = uiToSupabaseRoles[userData.role] || 'votante';
+          
           const { error: profileError } = await supabase
             .from('user_profiles')
             .insert({
               id: data.user.id,
-              name: userData.name,
-              role: userData.role,
-              region: userData.region,
-              department: userData.department,
-              municipality: userData.municipality,
-              hierarchy_level: userData.role === 'director-departamental' ? 1 : 
-                               userData.role === 'alcalde' ? 2 :
-                               userData.role === 'diputado-asamblea' ? 3 :
-                               userData.role === 'concejal' ? 4 : 10,
-              es_real_electo: false,
-              can_create_roles: JSON.stringify(getRolesUserCanCreate(userData.role)),
-              managed_territories: JSON.stringify([userData.municipality || ''].filter(Boolean))
+              email: email,
+              full_name: userData.name,
+              role: supabaseRole,
+              status: 'active'
             });
 
           if (profileError) {
@@ -474,16 +503,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const sendMessage = useCallback(async (message: Omit<Message, 'id' | 'timestamp'>) => {
     try {
+      // Map UI role to Supabase ENUM role
+      const uiToSupabaseRoles: Record<UserRole, string> = {
+        'director-departamental': 'comite-departamental',
+        'alcalde': 'candidato',
+        'diputado-asamblea': 'lider-regional', 
+        'concejal': 'votante',
+        'ciudadano-base': 'votante',
+        'lider-comunitario': 'votante',
+        'influenciador-digital': 'votante'
+      };
+      
+      const supabaseRole = uiToSupabaseRoles[message.senderRole] || 'votante';
+      
       const { error } = await supabase
         .from('messages')
         .insert({
           sender_id: message.senderId,
-          sender_name: state.user?.name || '',
-          sender_role: message.senderRole,
           content: message.content,
-          type: message.type,
+          message_type: message.type === 'broadcast' ? 'announcement' : 'request',
           priority: message.priority,
-          read_by: [],
+          role_target: supabaseRole,
+          is_read: false
         });
 
       if (error) {
@@ -530,18 +571,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const { error: dbError } = await supabase
           .from('databases')
           .insert({
-            name: file.name,
-            type: file.type.includes('image') ? 'image' : 
-                  file.type.includes('excel') || file.type.includes('sheet') ? 'excel' : 
-                  'document',
-            uploaded_by: state.user.id,
-            territory: state.user.region,
-            category,
-            url: publicUrl,
+            user_id: state.user.id,
+            file_name: file.name,
+            file_type: file.type,
+            file_size: file.size,
+            file_url: publicUrl,
+            storage_path: publicUrl ? `${state.user.id}/${file.name}` : null,
+            description: `Uploaded by ${state.user.name}`,
+            category: category || 'general',
+            is_public: false,
+            download_count: 0,
             metadata: {
               size: file.size,
               type: file.type,
               lastModified: file.lastModified,
+              uploader: state.user.name,
             },
           });
 

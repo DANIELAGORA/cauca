@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../contexts/AppContext';
-import { metricasActuales, municipiosMAIS, getMetricasPorNivel } from '../../data/estructura-jerarquica-completa';
+import { 
+  metricasActuales, 
+  municipiosMAIS, 
+  getMetricasPorNivel,
+  getTodosLosElectos,
+  alcaldesElectos,
+  diputadosAsamblea,
+  concejalesElectos,
+  directorDepartamental 
+} from '../../data/estructura-jerarquica-completa';
 import { MetricsGrid } from '../widgets/MetricsGrid';
 import { ChartWidget } from '../widgets/ChartWidget';
 import { MessageCenter } from '../widgets/MessageCenter';
+import { DepartmentalMessaging } from '../widgets/DepartmentalMessaging';
 import { UserManagement } from '../widgets/UserManagement';
 import TeamManagementPanel from '../organization/TeamManagementPanel';
 import HierarchicalReportingSystem from '../reporting/HierarchicalReportingSystem';
@@ -51,33 +61,33 @@ export const DepartmentalDashboard: React.FC = () => {
 
   const departmentalMetrics = [
     {
-      title: 'Concejales Cauca',
-      value: metricas.concejalesTotales.toString(),
-      change: 'Electos período 2024-2027',
+      title: 'Total Electos Cauca',
+      value: getTodosLosElectos().length.toString(),
+      change: 'Concejales + Alcaldes + Diputados',
       icon: Building,
       color: 'text-red-600',
       bgColor: 'bg-red-100'
     },
     {
-      title: 'Municipios Activos',
-      value: metricas.municipiosConPresencia.toString(),
-      change: 'Con representación MAIS',
+      title: 'Alcaldes MAIS',
+      value: alcaldesElectos.length.toString(),
+      change: 'Municipios dirigidos',
       icon: Users,
       color: 'text-green-600',
       bgColor: 'bg-green-100'
     },
     {
-      title: 'Sesiones Asistidas',
-      value: metricas.sesionesAsistidas.toString(),
-      change: `${Math.round(metricas.sesionesAsistidas/metricas.concejalesTotales)} promedio`,
+      title: 'Concejales Electos',
+      value: concejalesElectos.length.toString(),
+      change: 'En concejos municipales',
       icon: TrendingUp,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100'
     },
     {
-      title: 'Ciudadanos Impactados',
-      value: metricas.ciudadanosAtendidos.toString(),
-      change: 'Atención directa',
+      title: 'Diputados Asamblea',
+      value: diputadosAsamblea.length.toString(),
+      change: 'Asamblea Departamental',
       icon: Megaphone,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100'
@@ -152,7 +162,7 @@ export const DepartmentalDashboard: React.FC = () => {
               height={300}
             />
             
-            {/* Panel de municipios */}
+            {/* Panel de municipios con todos los electos */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <h3 className="text-lg font-semibold mb-4">Municipios con Presencia MAIS</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -160,16 +170,46 @@ export const DepartmentalDashboard: React.FC = () => {
                   <div key={municipio.nombre} className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-medium text-gray-800">{municipio.nombre}</h4>
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                        {municipio.concejales} concejal
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      <div className="font-medium">{municipio.concejal}</div>
-                      <div className="text-xs mt-1">
-                        📧 {municipio.contacto}<br />
-                        📱 {municipio.telefono}
+                      <div className="flex gap-1">
+                        {municipio.concejales > 0 && (
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                            {municipio.concejales} concejal{municipio.concejales > 1 ? 'es' : ''}
+                          </span>
+                        )}
+                        {municipio.alcalde !== 'Sin alcalde MAIS' && (
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                            Alcalde
+                          </span>
+                        )}
                       </div>
+                    </div>
+                    
+                    {/* Información del alcalde */}
+                    {municipio.alcalde !== 'Sin alcalde MAIS' && (
+                      <div className="text-sm text-gray-600 mb-2 p-2 bg-green-50 rounded">
+                        <div className="font-medium text-green-800">🏛️ Alcalde: {municipio.alcalde}</div>
+                        <div className="text-xs mt-1">
+                          📧 {municipio.alcaldeContacto}<br />
+                          📱 {municipio.alcaldeTelefono}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Información de concejales */}
+                    {municipio.concejales > 0 && (
+                      <div className="text-sm text-gray-600">
+                        <div className="font-medium">👥 Concejal: {municipio.concejal}</div>
+                        <div className="text-xs mt-1">
+                          📧 {municipio.contacto}<br />
+                          📱 {municipio.telefono}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Métricas municipales */}
+                    <div className="flex justify-between text-xs text-gray-500 mt-3 pt-2 border-t">
+                      <span>👥 {municipio.totalElectos} electos</span>
+                      <span>🎯 {municipio.proyectosActivos} proyectos</span>
                     </div>
                   </div>
                 ))}
@@ -178,7 +218,7 @@ export const DepartmentalDashboard: React.FC = () => {
           </div>
           
           <div className="space-y-6">
-            <MessageCenter />
+            <DepartmentalMessaging />
             
             {/* Resumen de estructura jerárquica */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -234,11 +274,11 @@ export const DepartmentalDashboard: React.FC = () => {
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h3 className="text-lg font-semibold mb-4">Análisis de Gestión Departamental</h3>
             <ChartWidget
-              title="Rendimiento por Municipio"
+              title="Electos MAIS por Municipio"
               type="bar"
               data={municipiosMAIS.map(m => ({
                 name: m.nombre,
-                value: Math.floor(Math.random() * 100) + 50
+                value: m.totalElectos
               }))}
               height={300}
             />
@@ -248,16 +288,20 @@ export const DepartmentalDashboard: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">Métricas de Liderazgo</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                <span className="text-sm font-medium">Equipos Creados</span>
+                <span className="text-sm font-medium">Subordinados Directos</span>
                 <span className="text-lg font-bold text-blue-600">{directSubordinates.length}</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                <span className="text-sm font-medium">Cobertura Municipal</span>
-                <span className="text-lg font-bold text-green-600">100%</span>
+                <span className="text-sm font-medium">Municipios con MAIS</span>
+                <span className="text-lg font-bold text-green-600">{municipiosMAIS.length}</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                <span className="text-sm font-medium">Eficiencia Organizacional</span>
-                <span className="text-lg font-bold text-purple-600">95%</span>
+                <span className="text-sm font-medium">Total Electos Supervisados</span>
+                <span className="text-lg font-bold text-purple-600">{getTodosLosElectos().length}</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+                <span className="text-sm font-medium">Proyectos Activos</span>
+                <span className="text-lg font-bold text-yellow-600">{municipiosMAIS.reduce((sum, m) => sum + m.proyectosActivos, 0)}</span>
               </div>
             </div>
           </div>
