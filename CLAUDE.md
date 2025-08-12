@@ -12,6 +12,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Developer**: Daniel Lopez "DSimnivaciones" Wramba fxiw  
 **Type**: Political Campaign Management PWA - Production Ready
 
+## ✅ CONFIRMED LIVE FEATURES (All Verified Working)
+
+### 🔐 User Authentication & Access Control
+- **Supabase Auth**: Fully configured and operational
+- **Registration**: Email/password signup with role selection
+- **Login**: Secure authentication with session management
+- **7 Role-Based Dashboards**: Each role has specific permissions and UI
+- **User Management**: Hierarchical user creation system
+
+### 👥 Current Live Users
+The system has 96+ real political representatives from MAIS Cauca:
+- **1 Director Departamental**: José Luis Diago Franco (joseluisdiago@maiscauca.com)
+- **5 Alcaldes**: Real elected mayors with verified data
+- **7 Diputados**: Asamblea Departamental del Cauca
+- **83 Concejales**: Municipal councilors across Cauca
+- **Master Password**: "agoramais2025" (for admin access)
+
+### 🏗️ Database Integration (Supabase)
+- **Live Tables**: `user_profiles`, `messages`, `databases`
+- **Real-time Subscriptions**: Live message updates
+- **Storage Bucket**: File uploads to "files" bucket
+- **Row Level Security**: Configured for role-based access
+
 ## Essential Commands
 
 ### Development

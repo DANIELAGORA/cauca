@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../contexts/AppContext';
-import { metricasActuales, municipiosMAIS, getMetricasPorNivel } from '../../data/estructura-jerarquica';
+import { metricasActuales, municipiosMAIS, getMetricasPorNivel } from '../../data/estructura-jerarquica-completa';
 import { MetricsGrid } from '../widgets/MetricsGrid';
 import { ChartWidget } from '../widgets/ChartWidget';
 import { MessageCenter } from '../widgets/MessageCenter';
+import { UserManagement } from '../widgets/UserManagement';
 import TeamManagementPanel from '../organization/TeamManagementPanel';
 import HierarchicalReportingSystem from '../reporting/HierarchicalReportingSystem';
 import { useOrganizationalStructure, useRoleSpecificData } from '../../hooks/useOrganizationalStructure';
@@ -216,7 +217,10 @@ export const DepartmentalDashboard: React.FC = () => {
 
       {/* Sección de gestión de equipo */}
       {activeSection === 'team' && (
-        <TeamManagementPanel className="" />
+        <div className="space-y-6">
+          <UserManagement />
+          <TeamManagementPanel className="" />
+        </div>
       )}
 
       {/* Sistema de reportes */}

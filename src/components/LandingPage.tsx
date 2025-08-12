@@ -204,10 +204,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
                 Acceder al Sistema
               </button>
               <a
-                href="#concejales"
+                href="#representantes"
                 className="border border-red-600 text-red-600 hover:bg-red-50 px-8 py-3 rounded-lg font-medium transition-colors"
               >
-                Ver Concejales Electos
+                Ver Representantes Electos
               </a>
             </div>
           </motion.div>
@@ -246,7 +246,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
       </section>
 
       {/* Electos Section */}
-      <section id="concejales" className="py-20 bg-gradient-to-br from-yellow-50 via-green-50 to-red-50">
+      <section id="representantes" className="py-20 bg-gradient-to-br from-yellow-50 via-green-50 to-red-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">

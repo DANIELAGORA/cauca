@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { UserRole } from '../types';
 import { useApp } from '../contexts/AppContext';
-import { logError } from '../utils/logger';
+import { logError, logInfo } from '../utils/logger';
 
 interface AuthFormProps {
   onSuccess?: () => void;
@@ -17,49 +17,79 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
     email: '',
     password: '',
     name: '',
-    role: 'votante' as UserRole,
+    role: 'ciudadano-base' as UserRole,
     region: '',
     department: '',
+    municipality: '',
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
+      // Validaciones básicas
+      if (!formData.email || !formData.password) {
+        setError('Email y contraseña son requeridos');
+        return;
+      }
+
+      if (!isLogin && !formData.name.trim()) {
+        setError('El nombre es requerido para registro');
+        return;
+      }
+
       let result;
       
       if (isLogin) {
+        logInfo('Iniciando sesión para usuario:', formData.email);
         result = await signIn(formData.email, formData.password);
       } else {
+        logInfo('Registrando nuevo usuario:', formData.email, 'con rol:', formData.role);
         result = await signUp(formData.email, formData.password, {
-          name: formData.name,
+          name: formData.name.trim(),
           role: formData.role,
-          region: formData.region || undefined,
-          department: formData.department || undefined,
+          region: formData.region.trim() || undefined,
+          department: formData.department.trim() || undefined,
+          municipality: formData.municipality.trim() || undefined,
         });
       }
 
       if (result.success) {
+        logInfo('Autenticación exitosa');
         onSuccess?.();
       } else {
-        setError(result.error || 'Error desconocido');
+        setError(result.error || 'Error desconocido en la autenticación');
       }
     } catch (err) {
-      logError('Auth form error:', err);
-      setError('Error de conexión');
+      logError('Error en formulario de autenticación:', err);
+      setError('Error de conexión. Verifica tu internet e intenta nuevamente.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [formData, isLogin, signIn, signUp, onSuccess]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
-  };
+    // Limpiar error al cambiar campos
+    if (error) setError('');
+  }, [error]);
+
+  const roleOptions = useMemo(() => [
+    { value: 'ciudadano-base', label: 'Ciudadano Base' },
+    { value: 'lider-comunitario', label: 'Líder Comunitario' },
+    { value: 'influenciador-digital', label: 'Influenciador Digital' },
+    { value: 'candidato', label: 'Candidato' },
+    { value: 'concejal', label: 'Concejal Municipal' },
+    { value: 'diputado-asamblea', label: 'Diputado a la Asamblea' },
+    { value: 'alcalde', label: 'Alcalde' },
+    { value: 'director-departamental', label: 'Director Departamental' },
+  ], []);
 
   return (
     <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
@@ -135,45 +165,59 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
+                required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               >
-                <option value="votante">Votante/Simpatizante</option>
-                <option value="lider">Líder Comunitario</option>
-                <option value="influenciador">Influenciador Digital</option>
-                <option value="candidato">Candidato</option>
-                <option value="concejal">Concejal Municipal</option>
-                <option value="comite-departamental">Comité Departamental</option>
-                <option value="lider-regional">Líder Regional</option>
-                <option value="comite-ejecutivo-nacional">Comité Ejecutivo Nacional</option>
+                {roleOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Región
-                </label>
-                <input
-                  type="text"
-                  name="region"
-                  value={formData.region}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  placeholder="Ej: Andina"
-                />
-              </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Región
+                  </label>
+                  <input
+                    type="text"
+                    name="region"
+                    value={formData.region}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Ej: Cauca"
+                  />
+                </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Departamento
+                  </label>
+                  <input
+                    type="text"
+                    name="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Ej: Cauca"
+                  />
+                </div>
+              </div>
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Departamento
+                  Municipio
                 </label>
                 <input
                   type="text"
-                  name="department"
-                  value={formData.department}
+                  name="municipality"
+                  value={formData.municipality}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  placeholder="Ej: Cundinamarca"
+                  placeholder="Ej: Popayán"
                 />
               </div>
             </div>
@@ -191,11 +235,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
 
       <div className="mt-6 text-center">
         <button
+          type="button"
           onClick={() => {
             setIsLogin(!isLogin);
             setError('');
+            logInfo('Cambiando modo de autenticación a:', !isLogin ? 'login' : 'registro');
           }}
-          className="text-red-600 hover:text-red-700 text-sm font-medium"
+          className="text-red-600 hover:text-red-700 text-sm font-medium transition-colors duration-200"
         >
           {isLogin 
             ? '¿No tienes cuenta? Regístrate aquí' 
@@ -207,6 +253,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
       <div className="mt-4 text-center text-xs text-gray-500">
         <p>Al continuar, aceptas los términos y condiciones del</p>
         <p><strong>Movimiento Alternativo Indígena y Social</strong></p>
+        <p className="mt-1">Protegemos tus datos con las mejores prácticas de seguridad</p>
       </div>
     </div>
   );

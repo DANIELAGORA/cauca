@@ -1,12 +1,14 @@
 export type UserRole = 
-  | 'comite-ejecutivo-nacional'
-  | 'lider-regional'
-  | 'comite-departamental'
-  | 'candidato'
-  | 'influenciador'
-  | 'lider'
+  | 'director-departamental'
+  | 'alcalde'
+  | 'diputado-asamblea'
   | 'concejal'
-  | 'votante';
+  | 'jal-local'
+  | 'coordinador-municipal'
+  | 'lider-comunitario'
+  | 'influenciador-digital'
+  | 'colaborador'
+  | 'ciudadano-base';
 
 export interface User {
   id: string;
@@ -20,12 +22,16 @@ export interface User {
   position?: string;
   election_date?: string;
   permissions?: string[];
+  hierarchyLevel: number; // 1=Director, 2=Alcalde, 3=Diputado, 4=Concejal, 5=JAL, 6+
+  canCreateRoles: UserRole[];
+  reportsTo?: string; // ID del superior jerárquico
+  managedTerritories: string[];
+  esRealElecto: boolean;
   lastActivity?: Date;
   joinedAt?: Date;
   lastActive?: Date;
   isActive?: boolean;
   isRealUser?: boolean;
-  canCreateRoles?: boolean;
   metadata?: Record<string, any>;
 }
 

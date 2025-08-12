@@ -1,22 +1,30 @@
+// CHART WIDGET OPTIMIZADO - SISTEMA MAIS
+// Widget de gráficos con análisis IA integrado - Sin errores lint
+
 import React, { useState } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
-import { Bot, LoaderCircle, Lightbulb } from 'lucide-react';
+import { LoaderCircle, Lightbulb } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// --- Configuración de la API de Gemini ---
+// Configuración de la API de Gemini
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 let genAI: GoogleGenerativeAI | null = null;
 if (apiKey) {
   genAI = new GoogleGenerativeAI(apiKey);
-} else {
-  logError("VITE_GEMINI_API_KEY no encontrada. La funcionalidad de IA en ChartWidget está deshabilitada.");
+}
+
+interface ChartData {
+  date?: string;
+  platform?: string;
+  value: number;
+  [key: string]: string | number | undefined;
 }
 
 interface ChartWidgetProps {
   title: string;
   type: 'line' | 'area' | 'bar' | 'donut';
-  data: any[];
+  data: ChartData[] | Record<string, number>;
   height?: number;
 }
 
@@ -32,7 +40,9 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ title, type, data, hei
       setAiChartError('La configuración de la API de IA no es válida.');
       return;
     }
-    if (!data || data.length === 0) {
+    
+    const dataLength = Array.isArray(data) ? data.length : Object.keys(data).length;
+    if (!data || dataLength === 0) {
       setAiChartError('No hay datos para analizar.');
       return;
     }
@@ -50,8 +60,8 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ title, type, data, hei
       const analysis = response.text();
       
       setAiChartAnalysis(analysis);
-    } catch (e) {
-      logError("Error al analizar gráfico con IA:", e);
+    } catch (error) {
+      console.error("Error al analizar gráfico con IA:", error);
       setAiChartError('Ocurrió un error al contactar la IA para el análisis del gráfico.');
     } finally {
       setIsAnalyzingChartAI(false);
@@ -60,10 +70,11 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ title, type, data, hei
 
   const renderChart = () => {
     switch (type) {
-      case 'line':
+      case 'line': {
+        const lineData = Array.isArray(data) ? data : [];
         return (
           <ResponsiveContainer width="100%" height={height}>
-            <LineChart data={data}>
+            <LineChart data={lineData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
@@ -72,11 +83,13 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ title, type, data, hei
             </LineChart>
           </ResponsiveContainer>
         );
+      }
 
-      case 'area':
+      case 'area': {
+        const areaData = Array.isArray(data) ? data : [];
         return (
           <ResponsiveContainer width="100%" height={height}>
-            <AreaChart data={data}>
+            <AreaChart data={areaData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
@@ -85,11 +98,13 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ title, type, data, hei
             </AreaChart>
           </ResponsiveContainer>
         );
+      }
 
-      case 'bar':
+      case 'bar': {
+        const barData = Array.isArray(data) ? data : [];
         return (
           <ResponsiveContainer width="100%" height={height}>
-            <BarChart data={data}>
+            <BarChart data={barData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="platform" />
               <YAxis />
@@ -98,13 +113,20 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ title, type, data, hei
             </BarChart>
           </ResponsiveContainer>
         );
+      }
 
-      case 'donut':
-        const pieData = Object.entries(data).map(([key, value], index) => ({
-          name: key,
-          value: value as number,
-          color: colors[index % colors.length]
-        }));
+      case 'donut': {
+        const pieData = Array.isArray(data) 
+          ? data.map((item, index) => ({
+              name: item.platform || item.date || `Item ${index + 1}`,
+              value: item.value,
+              color: colors[index % colors.length]
+            }))
+          : Object.entries(data).map(([key, value], index) => ({
+              name: key,
+              value: value as number,
+              color: colors[index % colors.length]
+            }));
 
         return (
           <ResponsiveContainer width="100%" height={height}>
@@ -126,11 +148,14 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ title, type, data, hei
             </PieChart>
           </ResponsiveContainer>
         );
+      }
 
       default:
         return <div>Tipo de gráfico no soportado</div>;
     }
   };
+
+  const dataLength = Array.isArray(data) ? data.length : Object.keys(data).length;
 
   return (
     <motion.div 
@@ -149,7 +174,7 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ title, type, data, hei
         )}
         <button
           onClick={handleAnalyzeChart}
-          disabled={isAnalyzingChartAI || !apiKey || !data || data.length === 0}
+          disabled={isAnalyzingChartAI || !apiKey || !data || dataLength === 0}
           className="w-full p-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center text-sm"
         >
           {isAnalyzingChartAI ? (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../contexts/AppContext';
-import { metricasActuales, municipiosMAIS, getMetricasPorNivel } from '../../data/estructura-jerarquica';
+import { metricasActuales, municipiosMAIS, getMetricasPorNivel } from '../../data/estructura-jerarquica-completa';
 import { MetricsGrid } from '../widgets/MetricsGrid';
 import { ChartWidget } from '../widgets/ChartWidget';
 import { MessageCenter } from '../widgets/MessageCenter';

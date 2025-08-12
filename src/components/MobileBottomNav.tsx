@@ -67,7 +67,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onNavigate, ac
           { id: 'events', icon: Calendar, label: 'Eventos' }
         ];
       
-      case 'votante':
+      case 'ciudadano-base':
         return [
           ...baseItems,
           { id: 'participation', icon: Heart, label: 'Participar' },

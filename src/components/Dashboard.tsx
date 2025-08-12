@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { logInfo } from '../utils/logger';
-import { NationalDashboard } from './dashboards/NationalDashboard';
 import { RegionalDashboard } from './dashboards/RegionalDashboard';
 import { DepartmentalDashboard } from './dashboards/DepartmentalDashboard';
+import { NationalDashboard } from './dashboards/NationalDashboard';
 import { CandidateDashboard } from './dashboards/CandidateDashboard';
 import { InfluencerDashboard } from './dashboards/InfluencerDashboard';
 import { LeaderDashboard } from './dashboards/LeaderDashboard';
 import { VoterDashboard } from './dashboards/VoterDashboard';
 import { ConcejalDashboard } from './dashboards/ConcejalDashboard';
+import { UserRole } from '../types';
 
 export const Dashboard: React.FC = () => {
   const { state } = useApp();
@@ -26,23 +27,38 @@ export const Dashboard: React.FC = () => {
   }
 
   switch (state.user?.role) {
-    case 'comite-ejecutivo-nacional':
-      return <NationalDashboard />;
-    case 'lider-regional':
-      return <RegionalDashboard />;
-    case 'comite-departamental':
+    case 'director-departamental':
       return <DepartmentalDashboard />;
-    case 'candidato':
-      return <CandidateDashboard />;
-    case 'influenciador':
-      return <InfluencerDashboard />;
-    case 'lider':
-      return <LeaderDashboard />;
+    case 'alcalde':
+      return <CandidateDashboard />; // Los alcaldes usan el dashboard de candidato
+    case 'diputado-asamblea':
+      return <RegionalDashboard />; // Los diputados ven nivel regional/departamental
     case 'concejal':
       return <ConcejalDashboard />;
-    case 'votante':
+    case 'jal-local':
+      return <LeaderDashboard />; // JAL usa dashboard de líder
+    case 'coordinador-municipal':
+      return <LeaderDashboard />;
+    case 'lider-comunitario':
+      return <LeaderDashboard />;
+    case 'influenciador-digital':
+      return <InfluencerDashboard />;
+    case 'colaborador':
+      return <VoterDashboard />; // Colaboradores usan dashboard básico
+    case 'ciudadano-base':
       return <VoterDashboard />;
     default:
-      return <div>Rol no reconocido</div>;
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Rol no reconocido: {state.user?.role || 'Sin rol'}
+            </h2>
+            <p className="text-gray-600">
+              Por favor contacta al administrador del sistema.
+            </p>
+          </div>
+        </div>
+      );
   }
 };

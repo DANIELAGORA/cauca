@@ -8,7 +8,7 @@ interface PWAInstallPromptProps {
 
 export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ onClose, onInstall }) => {
   const [deviceType, setDeviceType] = useState<'android' | 'ios' | 'desktop'>('desktop');
-  const [browserType, setBrowserType] = useState<'chrome' | 'safari' | 'firefox' | 'edge' | 'other'>('other');
+  const [, setBrowserType] = useState<'chrome' | 'safari' | 'firefox' | 'edge' | 'other'>('other');
 
   useEffect(() => {
     // Detectar dispositivo y navegador

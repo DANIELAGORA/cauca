@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { UserRole } from '../types';
-import { useApp } from '../contexts/AppContext';
 import { 
   Crown, 
   MapPin, 
@@ -9,221 +8,178 @@ import {
   Users, 
   Vote,
   ArrowRight,
-  ArrowLeft
+  ArrowLeft,
+  Shield,
+  Star,
+  Heart,
+  UserCheck
 } from 'lucide-react';
 
 const roles: { 
   key: UserRole; 
   name: string; 
   description: string; 
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string; }>;
   color: string;
 }[] = [
   {
-    key: 'comite-ejecutivo-nacional',
-    name: 'Comité Ejecutivo Nacional',
-    description: 'Control total, gestión nacional y toma de decisiones estratégicas',
+    key: 'director-departamental',
+    name: 'Director Departamental',
+    description: 'Máxima autoridad departamental, gestión de todos los electos MAIS',
     icon: Crown,
+    color: 'from-purple-600 to-purple-700'
+  },
+  {
+    key: 'alcalde',
+    name: 'Alcalde',
+    description: 'Autoridad municipal, gestión del territorio y equipo local',
+    icon: Building,
     color: 'from-red-600 to-red-700'
   },
   {
-    key: 'lider-regional',
-    name: 'Líder Regional',
-    description: 'Coordinación de múltiples departamentos y gestión territorial',
-    icon: MapPin,
-    color: 'from-yellow-500 to-yellow-600'
+    key: 'diputado-asamblea',
+    name: 'Diputado Asamblea',
+    description: 'Representación departamental, legislación y coordinación regional',
+    icon: Shield,
+    color: 'from-blue-600 to-blue-700'
   },
   {
-    key: 'comite-departamental',
-    name: 'Comité Departamental',
-    description: 'Gestión departamental, candidatos y operaciones locales',
-    icon: Building,
+    key: 'concejal',
+    name: 'Concejal',
+    description: 'Representación municipal, ordenanzas y gestión local',
+    icon: Vote,
     color: 'from-green-600 to-green-700'
   },
   {
-    key: 'candidato',
-    name: 'Candidato',
-    description: 'Gestión de campaña, métricas de influencia y comunicación',
-    icon: Megaphone,
-    color: 'from-red-500 to-yellow-500'
+    key: 'jal-local',
+    name: 'JAL Local',
+    description: 'Junta Administradora Local, gestión de corregimiento',
+    icon: MapPin,
+    color: 'from-yellow-600 to-yellow-700'
   },
   {
-    key: 'influenciador',
-    name: 'Influenciador Digital',
-    description: 'Creación de contenido, gestión de redes sociales y campañas digitales',
-    icon: Users,
-    color: 'from-purple-500 to-pink-500'
+    key: 'coordinador-municipal',
+    name: 'Coordinador Municipal',
+    description: 'Coordinación de actividades municipales y apoyo a electos',
+    icon: UserCheck,
+    color: 'from-orange-500 to-orange-600'
   },
   {
-    key: 'lider',
+    key: 'lider-comunitario',
     name: 'Líder Comunitario',
-    description: 'Liderazgo local, movilización y gestión comunitaria',
+    description: 'Liderazgo territorial, organización comunitaria',
     icon: Users,
-    color: 'from-green-500 to-yellow-500'
+    color: 'from-teal-500 to-teal-600'
   },
   {
-    key: 'votante',
-    name: 'Votante/Simpatizante',
-    description: 'Participación ciudadana, comunicación y apoyo al movimiento',
-    icon: Vote,
-    color: 'from-yellow-500 to-green-500'
+    key: 'influenciador-digital',
+    name: 'Influenciador Digital',
+    description: 'Gestión de redes sociales y comunicación digital',
+    icon: Megaphone,
+    color: 'from-pink-500 to-pink-600'
+  },
+  {
+    key: 'colaborador',
+    name: 'Colaborador',
+    description: 'Apoyo operativo y asistencia en actividades partidarias',
+    icon: Star,
+    color: 'from-gray-500 to-gray-600'
+  },
+  {
+    key: 'ciudadano-base',
+    name: 'Ciudadano Base',
+    description: 'Participación ciudadana y apoyo a iniciativas MAIS',
+    icon: Heart,
+    color: 'from-gray-400 to-gray-500'
   }
 ];
 
-export const RoleSelector: React.FC = () => {
-  const { loginWithRole } = useApp();
-  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
-  const [userName, setUserName] = useState('');
-  const [error, setError] = useState<string | null>(null);
+interface RoleSelectorProps {
+  selectedRole: UserRole;
+  onRoleSelect: (role: UserRole) => void;
+  title?: string;
+  showDescription?: boolean;
+}
 
-  const handleRoleSelect = (role: UserRole) => {
-    setSelectedRole(role);
-    setUserName('');
-    setError(null);
+export const RoleSelector: React.FC<RoleSelectorProps> = ({
+  selectedRole,
+  onRoleSelect,
+  title = "Selecciona tu rol en MAIS",
+  showDescription = true
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(
+    roles.findIndex(role => role.key === selectedRole) || 0
+  );
+
+  const currentRole = roles[currentIndex];
+
+  const nextRole = () => {
+    const newIndex = (currentIndex + 1) % roles.length;
+    setCurrentIndex(newIndex);
+    onRoleSelect(roles[newIndex].key);
   };
 
-  const handleContinue = async () => {
-    if (!selectedRole) {
-      setError('Por favor, seleccione un rol.');
-      return;
-    }
-    
-    if (!userName.trim()) {
-      setError('Por favor, introduce tu nombre.');
-      return;
-    }
-
-    setError(null);
-    
-    try {
-      await loginWithRole(
-        selectedRole,
-        userName.trim(),
-        'Región Demo',
-        'Departamento Demo'
-      );
-    } catch (error) {
-      logError('Error al acceder:', error);
-      setError('Error al acceder. Inténtalo de nuevo.');
-    }
+  const prevRole = () => {
+    const newIndex = currentIndex === 0 ? roles.length - 1 : currentIndex - 1;
+    setCurrentIndex(newIndex);
+    onRoleSelect(roles[newIndex].key);
   };
-
-  const handleBack = () => {
-    setSelectedRole(null);
-    setUserName('');
-    setError(null);
-  };
-
-  if (selectedRole) {
-    const roleData = roles.find(r => r.key === selectedRole);
-    const IconComponent = roleData?.icon || Crown;
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-600 via-yellow-500 to-green-600 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-          <div className="text-center mb-6">
-            <div className={`inline-flex p-4 rounded-full bg-gradient-to-r ${roleData?.color} mb-4`}>
-              <IconComponent className="h-8 w-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {roleData?.name}
-            </h2>
-            <p className="text-gray-600 text-sm">
-              {roleData?.description}
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tu nombre
-              </label>
-              <input
-                type="text"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                placeholder="Introduce tu nombre"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                autoFocus
-              />
-            </div>
-
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-700 text-sm">{error}</p>
-              </div>
-            )}
-
-            <div className="flex space-x-3">
-              <button
-                onClick={handleBack}
-                className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-300 flex items-center justify-center"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver
-              </button>
-              <button
-                onClick={handleContinue}
-                disabled={!userName.trim()}
-                className={`flex-1 py-3 px-4 bg-gradient-to-r ${roleData?.color} text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
-              >
-                Continuar
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-yellow-500 to-green-600 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-4xl">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-red-600 to-yellow-500 rounded-full mb-4">
-            <Crown className="h-10 w-10 text-white" />
+    <div className="w-full max-w-md mx-auto">
+      <h3 className="text-lg font-semibold text-center text-gray-900 mb-6">
+        {title}
+      </h3>
+      
+      <div className="relative">
+        <div className={`bg-gradient-to-r ${currentRole.color} rounded-lg p-6 text-white shadow-lg`}>
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={prevRole}
+              className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+              type="button"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center flex-1">
+              <currentRole.icon className="w-12 h-12 mx-auto mb-2" />
+              <h4 className="text-xl font-bold">{currentRole.name}</h4>
+            </div>
+            
+            <button
+              onClick={nextRole}
+              className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+              type="button"
+            >
+              <ArrowRight className="w-5 h-5" />
+            </button>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Centro de Mando MAIS
-          </h1>
-          <p className="text-gray-600">
-            Selecciona tu rol para acceder al sistema
-          </p>
+          
+          {showDescription && (
+            <p className="text-center text-sm opacity-90 leading-relaxed">
+              {currentRole.description}
+            </p>
+          )}
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {roles.map((role) => {
-            const IconComponent = role.icon;
-            return (
-              <button
-                key={role.key}
-                onClick={() => handleRoleSelect(role.key)}
-                className="group p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-transparent hover:shadow-lg transform hover:scale-105 transition-all duration-300 text-left"
-              >
-                <div className={`inline-flex p-3 rounded-lg bg-gradient-to-r ${role.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <IconComponent className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-300">
-                  {role.name}
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {role.description}
-                </p>
-                <div className="mt-4 flex items-center text-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-sm font-medium">Seleccionar</span>
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </div>
-              </button>
-            );
-          })}
+        
+        {/* Indicadores */}
+        <div className="flex justify-center mt-4 space-x-2">
+          {roles.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setCurrentIndex(index);
+                onRoleSelect(roles[index].key);
+              }}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === currentIndex 
+                  ? 'bg-red-600' 
+                  : 'bg-gray-300'
+              }`}
+            />
+          ))}
         </div>
-
-        {error && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-700 text-center">{error}</p>
-          </div>
-        )}
       </div>
     </div>
   );

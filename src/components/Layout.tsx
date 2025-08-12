@@ -19,7 +19,6 @@ import {
   Database,
   Megaphone,
   Bot,
-  Heart,
   Share2,
   ExternalLink,
   Smartphone
@@ -52,7 +51,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [chatMessages, setChatMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -101,7 +100,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     'candidato': 'Candidato',
     'influenciador': 'Influenciador Digital',
     'lider': 'Líder Comunitario',
-    'votante': 'Votante/Simpatizante'
+    'ciudadano-base': 'Votante/Simpatizante'
   };
 
   const allRoles: UserRole[] = [
@@ -111,7 +110,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     'candidato',
     'influenciador',
     'lider',
-    'votante'
+    'ciudadano-base'
   ];
 
   const menuItems = [
@@ -194,7 +193,7 @@ Responde de manera informativa y útil sobre MAIS y sus propuestas políticas.`;
       case 'candidato': return 'from-red-500 to-yellow-500';
       case 'influenciador': return 'from-purple-500 to-pink-500';
       case 'lider': return 'from-green-500 to-yellow-500';
-      case 'votante': return 'from-yellow-500 to-green-500';
+      case 'ciudadano-base': return 'from-yellow-500 to-green-500';
       default: return 'from-gray-500 to-gray-600';
     }
   };

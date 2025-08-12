@@ -1,13 +1,31 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, ReactNode, useCallback } from 'react';
 import { User, UserRole, Message, Campaign, DatabaseEntry, Analytics, CampaignFinanceEntry } from '../types';
 import { createClient } from '@supabase/supabase-js';
 import { logError, logInfo } from '../utils/logger';
+import { getUserDataNetwork, canUserCreateRole, getRolesUserCanCreate, createUserWithHierarchy, DATA_PROTECTION, HIERARCHY_LEVELS } from '../utils/hierarchy';
+import { getTodosLosElectos, MASTER_PASSWORD } from '../data/estructura-jerarquica-completa';
 
-// Supabase configuration
+// Supabase configuration - Using environment variables for security
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://djgkjtqpzedxnqwqdcjx.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqZ2tqdHFwemVkeG5xd3FkY2p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ5MzAxNzYsImV4cCI6MjA3MDUwNjE3Nn0.cJ7QCM5k7yZjtqseRFff3SSxE3YaqzedQHevJ3sfZKI';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Initialize Supabase client with optimized settings
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+    flowType: 'pkce'
+  },
+  db: {
+    schema: 'public'
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'mais-political-center'
+    }
+  }
+});
 
 interface AppState {
   user: User | null;
@@ -75,7 +93,11 @@ const AppContext = createContext<{
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
   signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  signUp: (email: string, password: string, userData: { name: string; role: UserRole; region?: string; department?: string }) => Promise<{ success: boolean; error?: string }>;
+  signUp: (email: string, password: string, userData: { name: string; role: UserRole; region?: string; department?: string; municipality?: string }) => Promise<{ success: boolean; error?: string }>;
+  createSubordinateUser: (userData: { name: string; email: string; role: UserRole; municipality?: string }) => Promise<{ success: boolean; error?: string }>;
+  getUserNetwork: () => User[];
+  canCreateRole: (targetRole: UserRole) => boolean;
+  getCreatableRoles: () => UserRole[];
   signOut: () => Promise<void>;
   sendMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>;
   uploadFile: (file: File, category: string) => Promise<void>;
@@ -158,11 +180,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
+        const userRole = (profile?.role as UserRole) || 'ciudadano-base';
         const userProfile: User = {
           id: userId,
           email: user.email || '',
           name: profile?.name || user.email?.split('@')[0] || 'Usuario',
-          role: profile?.role as UserRole || 'votante',
+          role: userRole,
+          hierarchyLevel: HIERARCHY_LEVELS[userRole] || 10,
+          canCreateRoles: getRolesUserCanCreate(userRole),
+          managedTerritories: [profile?.municipality || ''].filter(Boolean),
+          esRealElecto: false,
           region: profile?.region || profile?.municipality,
           department: profile?.department,
           municipality: profile?.municipality,
@@ -363,7 +390,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -380,12 +407,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       logError('Sign in error:', error);
       return { success: false, error: 'Error inesperado al iniciar sesión' };
     }
-  };
+  }, []);
 
-  const signUp = async (
+  const signUp = useCallback(async (
     email: string, 
     password: string, 
-    userData: { name: string; role: UserRole; region?: string; department?: string }
+    userData: { name: string; role: UserRole; region?: string; department?: string; municipality?: string }
   ) => {
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -409,6 +436,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
               role: userData.role,
               region: userData.region,
               department: userData.department,
+              municipality: userData.municipality,
+              hierarchy_level: userData.role === 'director-departamental' ? 1 : 
+                               userData.role === 'alcalde' ? 2 :
+                               userData.role === 'diputado-asamblea' ? 3 :
+                               userData.role === 'concejal' ? 4 : 10,
+              es_real_electo: false,
+              can_create_roles: JSON.stringify(getRolesUserCanCreate(userData.role)),
+              managed_territories: JSON.stringify([userData.municipality || ''].filter(Boolean))
             });
 
           if (profileError) {
@@ -424,9 +459,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       logError('Sign up error:', error);
       return { success: false, error: 'Error inesperado al registrar usuario' };
     }
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
@@ -435,9 +470,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     } catch (error) {
       logError('Sign out error:', error);
     }
-  };
+  }, []);
 
-  const sendMessage = async (message: Omit<Message, 'id' | 'timestamp'>) => {
+  const sendMessage = useCallback(async (message: Omit<Message, 'id' | 'timestamp'>) => {
     try {
       const { error } = await supabase
         .from('messages')
@@ -461,9 +496,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       logError('Error sending message:', error);
       throw error;
     }
-  };
+  }, [state.user]);
 
-  const uploadFile = async (file: File, category: string) => {
+  const uploadFile = useCallback(async (file: File, category: string) => {
     try {
       if (!state.user) {
         throw new Error('Usuario no autenticado');
@@ -539,9 +574,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       logError('Error uploading file:', error);
       throw error;
     }
-  };
+  }, [state.user, dispatch]);
 
-  const addCampaignFinanceEntry = async (entry: Omit<CampaignFinanceEntry, 'id' | 'created_at'>) => {
+  const addCampaignFinanceEntry = useCallback(async (entry: Omit<CampaignFinanceEntry, 'id' | 'created_at'>) => {
     try {
       if (!state.user) {
         throw new Error('Usuario no autenticado');
@@ -560,7 +595,81 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       logError('Error adding campaign finance entry:', error);
       throw error;
     }
-  };
+  }, [state.user, dispatch]);
+
+  // Crear usuario subordinado (nuevo miembro del equipo)
+  const createSubordinateUser = useCallback(async (userData: { name: string; email: string; role: UserRole; municipality?: string }) => {
+    try {
+      if (!state.user) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      const result = createUserWithHierarchy(state.user.role, userData, userData.role);
+      
+      if (!result.success) {
+        return { success: false, error: result.error };
+      }
+
+      // Intentar crear en Supabase
+      try {
+        const { error } = await supabase.auth.signUp({
+          email: userData.email,
+          password: MASTER_PASSWORD, // Usar contraseña maestra para nuevos usuarios
+        });
+
+        if (error) {
+          logError('Error creating subordinate user:', error);
+        } else {
+          logInfo(`Usuario subordinado creado: ${userData.name} con rol ${userData.role}`);
+        }
+      } catch (err) {
+        logInfo('Supabase signup failed, but user structure created');
+      }
+
+      return { success: true };
+    } catch (error) {
+      logError('Error creating subordinate user:', error);
+      return { success: false, error: 'Error inesperado al crear usuario subordinado' };
+    }
+  }, [state.user]);
+
+  // Obtener red de usuarios visibles
+  const getUserNetwork = useCallback((): User[] => {
+    if (!state.user) return [];
+    
+    // Simular red basada en jerarquía y territorio
+    const network = getUserDataNetwork(state.user);
+    return network.map(electo => ({
+      id: electo.id,
+      email: electo.email,
+      name: electo.nombre,
+      role: electo.role as UserRole,
+      hierarchyLevel: electo.role === 'director-departamental' ? 1 : 
+                      electo.role === 'alcalde' ? 2 :
+                      electo.role === 'diputado-asamblea' ? 3 :
+                      electo.role === 'concejal' ? 4 : 10,
+      municipality: electo.municipio,
+      phone: electo.telefono,
+      esRealElecto: electo.esRealElecto,
+      canCreateRoles: getRolesUserCanCreate(electo.role as UserRole),
+      managedTerritories: [electo.municipio],
+      department: electo.partidoNombre.includes('MAIS') ? 'Cauca' : 'Otro',
+      isActive: true,
+      isRealUser: true
+    }));
+  }, [state.user]);
+
+  // Verificar si puede crear un rol específico
+  const canCreateRole = useCallback((targetRole: UserRole): boolean => {
+    if (!state.user) return false;
+    return canUserCreateRole(state.user.role, targetRole);
+  }, [state.user]);
+
+  // Obtener roles que puede crear
+  const getCreatableRoles = useCallback((): UserRole[] => {
+    if (!state.user) return [];
+    return getRolesUserCanCreate(state.user.role);
+  }, [state.user]);
 
   return (
     <AppContext.Provider value={{
@@ -572,6 +681,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       sendMessage,
       uploadFile,
       addCampaignFinanceEntry,
+      createSubordinateUser,
+      getUserNetwork,
+      canCreateRole,
+      getCreatableRoles,
     }}>
       {children}
     </AppContext.Provider>

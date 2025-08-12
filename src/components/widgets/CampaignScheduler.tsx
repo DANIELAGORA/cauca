@@ -1,10 +1,10 @@
+// CAMPAIGN SCHEDULER MAIS - OPTIMIZADO
+// Programador de campañas integrado con IA - Sin errores lint
+
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { 
-  Calendar, 
-  Clock, 
   Target, 
-  DollarSign,
   Instagram,
   Youtube,
   Play,
@@ -18,14 +18,13 @@ import {
   LoaderCircle
 } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { logError, logInfo } from '../../utils/logger';
 
-// --- Configuración de la API de Gemini ---
+// Configuración de la API de Gemini
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 let genAI: GoogleGenerativeAI | null = null;
 if (apiKey) {
   genAI = new GoogleGenerativeAI(apiKey);
-} else {
-  logError("VITE_GEMINI_API_KEY no encontrada. La funcionalidad de IA en CampaignScheduler está deshabilitada.");
 }
 
 export const CampaignScheduler: React.FC = () => {
@@ -43,9 +42,8 @@ export const CampaignScheduler: React.FC = () => {
   });
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
 
-  // --- Estados para la funcionalidad de IA en audiencia ---
+  // Estados para la funcionalidad de IA en audiencia
   const [aiAudiencePrompt, setAiAudiencePrompt] = useState('');
-  const [generatedAudience, setGeneratedAudience] = useState('');
   const [isGeneratingAudience, setIsGeneratingAudience] = useState(false);
   const [aiAudienceError, setAiAudienceError] = useState<string | null>(null);
 
@@ -61,7 +59,6 @@ export const CampaignScheduler: React.FC = () => {
 
     setIsGeneratingAudience(true);
     setAiAudienceError(null);
-    setGeneratedAudience('');
 
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
@@ -71,11 +68,10 @@ export const CampaignScheduler: React.FC = () => {
       const response = await result.response;
       const audienceText = response.text();
       
-      setGeneratedAudience(audienceText);
       // Auto-llenar el campo audiencia del formulario
       setCampaignForm(prev => ({ ...prev, audience: audienceText }));
-    } catch (e) {
-      logError("Error al generar audiencia con IA:", e);
+    } catch (error) {
+      logError("Error al generar audiencia con IA:", error);
       setAiAudienceError('Ocurrió un error al contactar la IA para la audiencia.');
     } finally {
       setIsGeneratingAudience(false);
@@ -122,7 +118,6 @@ export const CampaignScheduler: React.FC = () => {
         startDate: '',
         endDate: ''
       });
-      setGeneratedAudience('');
       setAiAudiencePrompt('');
       
     } catch (error) {
@@ -273,6 +268,8 @@ export const CampaignScheduler: React.FC = () => {
               </label>
               <input
                 type="date"
+                value={campaignForm.startDate}
+                onChange={(e) => setCampaignForm(prev => ({ ...prev, startDate: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
@@ -283,6 +280,8 @@ export const CampaignScheduler: React.FC = () => {
               </label>
               <input
                 type="date"
+                value={campaignForm.endDate}
+                onChange={(e) => setCampaignForm(prev => ({ ...prev, endDate: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
@@ -301,7 +300,7 @@ export const CampaignScheduler: React.FC = () => {
                 />
                 <button
                   onClick={handleGenerateAudience}
-                  disabled={isGeneratingAudience || !apiKey} // Deshabilitar si está generando o no hay API Key
+                  disabled={isGeneratingAudience || !apiKey}
                   className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                   title="Generar audiencia con IA"
                 >
@@ -318,7 +317,7 @@ export const CampaignScheduler: React.FC = () => {
                 type="text"
                 value={aiAudiencePrompt}
                 onChange={(e) => setAiAudiencePrompt(e.target.value)}
-                placeholder="Ej: Campaña para jóvenes votantes en Bogotá sobre medio ambiente"
+                placeholder="Ej: Campaña para jóvenes ciudadanos en Bogotá sobre medio ambiente"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
               />
             </div>
@@ -342,9 +341,7 @@ export const CampaignScheduler: React.FC = () => {
                   Creando...
                 </>
               ) : (
-                <>
-                  🚀 Crear Campaña
-                </>
+                '🚀 Crear Campaña'
               )}
             </button>
           </div>

@@ -1,5 +1,7 @@
-// ESTRUCTURA JERÁRQUICA COMPLETA MAIS CAUCA - TODOS LOS ELECTOS REALES
-// Basado en datos oficiales proporcionados por el usuario
+// ESTRUCTURA JERÁRQUICA COMPLETA MAIS - DATOS REALES DE PRODUCCIÓN
+// Solo CAUCA tiene datos reales, otros departamentos en 0 hasta configuración nacional
+
+import { UserRole } from '../types';
 
 export interface CandidatoElecto {
   id: string;
@@ -7,7 +9,7 @@ export interface CandidatoElecto {
   email: string;
   telefono: string;
   cedula: string;
-  role: 'director-departamental' | 'alcalde' | 'concejal' | 'diputado-asamblea' | 'jal-local';
+  role: UserRole;
   corporacion: string;
   municipio: string;
   estado: 'elegido' | 'en-ejercicio' | 'acepto-curul';
@@ -659,6 +661,36 @@ export function getElectosPorMunicipio(municipio: string): CandidatoElecto[] {
 export function getElectosPorRol(role: string): CandidatoElecto[] {
   const todos = getTodosLosElectos();
   return todos.filter(electo => electo.role === role);
+}
+
+// MÉTRICAS Y DATOS PARA COMPATIBILIDAD CON DASHBOARDS
+export const metricasActuales = {
+  totalElectos: getTodosLosElectos().length,
+  alcaldes: alcaldesElectos.length,
+  diputados: diputadosAsamblea.length,
+  concejales: concejalesElectos.length,
+  jal: jalLocal.length,
+  porcentajeHombresMujeres: {
+    hombres: (getTodosLosElectos().filter(e => e.genero === 'M').length / getTodosLosElectos().length) * 100,
+    mujeres: (getTodosLosElectos().filter(e => e.genero === 'F').length / getTodosLosElectos().length) * 100
+  }
+};
+
+export const municipiosMAIS = [
+  'INZA', 'PAEZ (BELALCAZAR)', 'SANTANDER DE QUILICHAO', 'PATIA (EL BORDO)'
+];
+
+export function getMetricasPorNivel(nivel: string) {
+  switch(nivel.toLowerCase()) {
+    case 'departamental':
+      return { electos: [directorDepartamental], total: 1 };
+    case 'municipal':
+      return { electos: [...alcaldesElectos, ...concejalesElectos], total: alcaldesElectos.length + concejalesElectos.length };
+    case 'asamblea':
+      return { electos: diputadosAsamblea, total: diputadosAsamblea.length };
+    default:
+      return { electos: getTodosLosElectos(), total: getTodosLosElectos().length };
+  }
 }
 
 export default {
