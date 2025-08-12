@@ -51,36 +51,105 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
     }
   ];
 
-  const concejales = [
+  const electosDestacados = [
+    // ALCALDES MAIS
     {
-      nombre: "María Elena Tique",
-      municipio: "Popayán",
-      telefono: "+57 300 456 7890",
-      email: "maria.tique@maiscauca.com"
+      nombre: "Gelmis Chate Rivera",
+      cargo: "Alcalde",
+      municipio: "Inza",
+      telefono: "3225382560",
+      email: "chate08@gmail.com",
+      tipo: "alcalde"
     },
     {
-      nombre: "Carlos Andrés Muñoz", 
-      municipio: "Santander de Quilichao",
-      telefono: "+57 301 234 5678",
-      email: "carlos.munoz@maiscauca.com"
+      nombre: "Jhon Jairo Fuentes Quinayas",
+      cargo: "Alcalde", 
+      municipio: "Patia (El Bordo)",
+      telefono: "3227684684",
+      email: "JHONFUENTES10599@GMAIL.COM",
+      tipo: "alcalde"
     },
     {
-      nombre: "Ana Lucía Vargas",
-      municipio: "Piendamó",
-      telefono: "+57 302 345 6789", 
-      email: "ana.vargas@maiscauca.com"
+      nombre: "Jaime Diaz Noscue",
+      cargo: "Alcalde",
+      municipio: "Toribio",
+      telefono: "3214314309",
+      email: "JAIMEDIAZ99@GMAIL.COM",
+      tipo: "alcalde"
     },
     {
-      nombre: "Roberto Silva",
+      nombre: "Oscar Yamit Guacheta Arrubla",
+      cargo: "Alcalde",
+      municipio: "Morales",
+      telefono: "3125268424",
+      email: "guachetafernandez@hotmail.com",
+      tipo: "alcalde"
+    },
+    {
+      nombre: "Lida Emilse Paz Labio",
+      cargo: "Alcaldesa",
+      municipio: "Jambalo",
+      telefono: "3117086819",
+      email: "liempala@gmail.com",
+      tipo: "alcalde"
+    },
+    // DIPUTADOS ASAMBLEA
+    {
+      nombre: "Gilberto Muñoz Coronado",
+      cargo: "Diputado Asamblea",
+      municipio: "Departamental",
+      telefono: "3103473660",
+      email: "MUCORO@YAHOO.ES",
+      tipo: "diputado"
+    },
+    {
+      nombre: "Ferley Quintero Quinayas",
+      cargo: "Diputado Asamblea",
+      municipio: "Departamental",
+      telefono: "3112198953",
+      email: "ferqino7@gmail.com",
+      tipo: "diputado"
+    },
+    // CONCEJALES PRINCIPALES
+    {
+      nombre: "Adexe Alejandro Hoyos Quiñonez",
+      cargo: "Concejal",
+      municipio: "Almaguer",
+      telefono: "3218702256",
+      email: "adexeyesina@gmail.com",
+      tipo: "concejal"
+    },
+    {
+      nombre: "Griceldino Chilo Menza",
+      cargo: "Concejal",
       municipio: "Caldono",
-      telefono: "+57 303 456 7890",
-      email: "roberto.silva@maiscauca.com"
+      telefono: "3116392077",
+      email: "griceldino.chilo@maiscauca.org",
+      tipo: "concejal"
     },
     {
-      nombre: "Esperanza Yatacué",
-      municipio: "Toribío",
-      telefono: "+57 304 567 8901",
-      email: "esperanza.yatacue@maiscauca.com"
+      nombre: "Carlos Alberto Sanchez",
+      cargo: "Concejal",
+      municipio: "Caloto",
+      telefono: "3122387492",
+      email: "scarlosalberto30@yahoo.es",
+      tipo: "concejal"
+    },
+    {
+      nombre: "Carlos Albeiro Huila Cometa",
+      cargo: "Concejal",
+      municipio: "Morales",
+      telefono: "3177794172",
+      email: "CALVEHUILA@GMAIL.COM",
+      tipo: "concejal"
+    },
+    {
+      nombre: "Abelino Campo Fisus",
+      cargo: "Concejal",
+      municipio: "Paez (Belalcazar)",
+      telefono: "3234773564",
+      email: "abelinocampof@gmail.com",
+      tipo: "concejal"
     }
   ];
 
@@ -176,49 +245,102 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
         </div>
       </section>
 
-      {/* Concejales Section */}
+      {/* Electos Section */}
       <section id="concejales" className="py-20 bg-gradient-to-br from-blue-50 to-green-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              Concejales Electos MAIS Cauca
+              Representantes Electos MAIS Cauca
             </h3>
             <p className="text-lg text-gray-600">
-              Nuestros representantes electos en diferentes municipios del departamento
+              5 Alcaldes, 2 Diputados y 87 Concejales electos en 22 municipios del departamento
             </p>
+            <div className="mt-4 flex justify-center space-x-8 text-sm">
+              <div className="bg-green-100 px-4 py-2 rounded-lg">
+                <span className="text-green-800 font-semibold">5 Alcaldías</span>
+              </div>
+              <div className="bg-blue-100 px-4 py-2 rounded-lg">
+                <span className="text-blue-800 font-semibold">2 Diputados</span>
+              </div>
+              <div className="bg-purple-100 px-4 py-2 rounded-lg">
+                <span className="text-purple-800 font-semibold">87 Concejales</span>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {concejales.map((concejal, index) => (
+            {electosDestacados.map((electo, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white p-6 rounded-xl shadow-lg border border-blue-100"
+                className={`bg-white p-6 rounded-xl shadow-lg border-2 ${
+                  electo.tipo === 'alcalde' ? 'border-green-200 bg-green-50' :
+                  electo.tipo === 'diputado' ? 'border-blue-200 bg-blue-50' :
+                  'border-purple-200 bg-purple-50'
+                }`}
               >
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-green-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${
+                    electo.tipo === 'alcalde' ? 'bg-gradient-to-r from-green-600 to-green-700' :
+                    electo.tipo === 'diputado' ? 'bg-gradient-to-r from-blue-600 to-blue-700' :
+                    'bg-gradient-to-r from-purple-600 to-purple-700'
+                  }`}>
                     <Users className="w-8 h-8 text-white" />
                   </div>
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2">{concejal.nombre}</h4>
+                  <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-2 ${
+                    electo.tipo === 'alcalde' ? 'bg-green-200 text-green-800' :
+                    electo.tipo === 'diputado' ? 'bg-blue-200 text-blue-800' :
+                    'bg-purple-200 text-purple-800'
+                  }`}>
+                    {electo.cargo}
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">{electo.nombre}</h4>
                   <div className="space-y-2 text-sm text-gray-600">
                     <div className="flex items-center justify-center space-x-2">
                       <MapPin className="w-4 h-4" />
-                      <span>{concejal.municipio}</span>
+                      <span className="font-medium">{electo.municipio}</span>
                     </div>
                     <div className="flex items-center justify-center space-x-2">
                       <Phone className="w-4 h-4" />
-                      <span>{concejal.telefono}</span>
+                      <span>{electo.telefono}</span>
                     </div>
                     <div className="flex items-center justify-center space-x-2">
                       <Mail className="w-4 h-4" />
-                      <span className="text-xs">{concejal.email}</span>
+                      <span className="text-xs">{electo.email}</span>
                     </div>
                   </div>
                 </div>
               </motion.div>
             ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 max-w-2xl mx-auto">
+              <h4 className="text-xl font-bold text-gray-900 mb-4">Cobertura Total MAIS Cauca</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <div className="text-3xl font-bold text-green-600">5</div>
+                  <div className="text-sm text-gray-600">Alcaldías</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-blue-600">2</div>
+                  <div className="text-sm text-gray-600">Diputados</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-purple-600">87</div>
+                  <div className="text-sm text-gray-600">Concejales</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-orange-600">22</div>
+                  <div className="text-sm text-gray-600">Municipios</div>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500 mt-4">
+                MAIS es la fuerza política con mayor representación en el Cauca
+              </p>
+            </div>
           </div>
         </div>
       </section>
