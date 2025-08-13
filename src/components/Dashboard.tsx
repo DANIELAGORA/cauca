@@ -3,6 +3,7 @@ import { useApp } from '../contexts/AppContext';
 import { logInfo } from '../utils/logger';
 import { RegionalDashboard } from './dashboards/RegionalDashboard';
 import { DepartmentalDashboard } from './dashboards/DepartmentalDashboard';
+import { DirectorDashboard } from './dashboards/DirectorDashboard';
 import { NationalDashboard } from './dashboards/NationalDashboard';
 import { CandidateDashboard } from './dashboards/CandidateDashboard';
 import { InfluencerDashboard } from './dashboards/InfluencerDashboard';
@@ -26,9 +27,15 @@ export const Dashboard: React.FC = () => {
     );
   }
 
+  // Detectar si es José Luis Diago (Director especial)
+  const isJoseLuisDiago = state.user?.name?.toLowerCase().includes('josé luis diago') || 
+                         state.user?.name?.toLowerCase().includes('jose luis diago') ||
+                         state.user?.email?.includes('joseluisdiago');
+
   switch (state.user?.role) {
     case 'director-departamental':
-      return <DepartmentalDashboard />;
+      // Si es José Luis Diago, usar el dashboard especial
+      return isJoseLuisDiago ? <DirectorDashboard /> : <DepartmentalDashboard />;
     case 'alcalde':
       return <CandidateDashboard />; // Los alcaldes usan el dashboard de candidato
     case 'diputado-asamblea':
