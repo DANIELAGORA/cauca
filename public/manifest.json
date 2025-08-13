@@ -1,0 +1,124 @@
+{
+  "name": "MAIS Centro de Mando Político - Cauca",
+  "short_name": "MAIS Cauca",
+  "description": "Sistema político jerárquico para el Movimiento Alternativo Indígena y Social - Departamento del Cauca. José Luis Diago Director Departamental.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es-CO",
+  "dir": "ltr",
+  "categories": ["political", "productivity", "social", "government"],
+  "icons": [
+    {
+      "src": "/app.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon",
+      "purpose": "any"
+    },
+    {
+      "src": "/app.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/app.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/app.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/app.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard MAIS Cauca"
+    },
+    {
+      "src": "/app.png",
+      "sizes": "192x192", 
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard Móvil MAIS"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard Director",
+      "short_name": "Director",
+      "description": "José Luis Diago - Director Departamental Cauca",
+      "url": "/?role=director-departamental",
+      "icons": [
+        {
+          "src": "/app.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard Concejal", 
+      "short_name": "Concejal",
+      "description": "Dashboard para concejales electos MAIS",
+      "url": "/?role=concejal-electo", 
+      "icons": [
+        {
+          "src": "/app.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Mi Equipo",
+      "short_name": "Equipo", 
+      "description": "Gestión de equipo organizacional",
+      "url": "/?section=team",
+      "icons": [
+        {
+          "src": "/app.png", 
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Reportes",
+      "short_name": "Reportes",
+      "description": "Sistema de reportes jerárquicos", 
+      "url": "/?section=reports",
+      "icons": [
+        {
+          "src": "/app.png",
+          "sizes": "192x192", 
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}
