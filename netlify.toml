@@ -121,10 +121,15 @@
   status = 200
   force = false
 
-# Optimization redirects
+# CORRECCIÓN: Assets están en root, no en /assets/
 [[redirects]]
   from = "/favicon.ico"
-  to = "/assets/favicon.ico"
+  to = "/app.ico"
+  status = 301
+
+[[redirects]]
+  from = "/mais-logo.svg"
+  to = "/app.ico"
   status = 301
 
 # Error pages
