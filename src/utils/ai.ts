@@ -121,7 +121,7 @@ class AIManager {
    */
   async analyzeText(text: string, analysisType: 'sentiment' | 'keywords' | 'summary' = 'sentiment'): Promise<AIResponse> {
     if (!this.isAvailable()) {
-      return this.getDemoResponse('analyze', text, analysisType);
+      return this.getOfflineResponse('analyze', text, analysisType);
     }
 
     try {
@@ -129,10 +129,10 @@ class AIManager {
         return await this.analyzeWithGemini(text, analysisType);
       }
       
-      return this.getDemoResponse('analyze', text, analysisType);
+      return this.getOfflineResponse('analyze', text, analysisType);
     } catch (error) {
       logError('Error analizando texto:', error);
-      return this.getDemoResponse('analyze', text, analysisType);
+      return this.getOfflineResponse('analyze', text, analysisType);
     }
   }
 
@@ -141,7 +141,7 @@ class AIManager {
    */
   async generateSuggestions(context: string, type: 'post' | 'campaign' | 'response' = 'post'): Promise<AIResponse> {
     if (!this.isAvailable()) {
-      return this.getDemoResponse('suggest', context, type);
+      return this.getOfflineResponse('suggest', context, type);
     }
 
     try {
@@ -149,10 +149,10 @@ class AIManager {
         return await this.suggestWithGemini(context, type);
       }
       
-      return this.getDemoResponse('suggest', context, type);
+      return this.getOfflineResponse('suggest', context, type);
     } catch (error) {
       logError('Error generando sugerencias:', error);
-      return this.getDemoResponse('suggest', context, type);
+      return this.getOfflineResponse('suggest', context, type);
     }
   }
 
@@ -269,10 +269,10 @@ class AIManager {
   }
 
   /**
-   * Respuestas demo para cuando la IA no está disponible
+   * Respuestas offline para cuando la IA no está disponible
    */
-  private getDemoResponse(action: string, input: string, type?: string): AIResponse {
-    const demoResponses = {
+  private getOfflineResponse(action: string, input: string, type?: string): AIResponse {
+    const offlineResponses = {
       generate: {
         post: [
           "🌟 Construyamos juntos el futuro que Colombia merece. Cada voto cuenta, cada voz importa. #VotaConsciente #FuturoDeColombia",
@@ -356,15 +356,15 @@ class AIManager {
       }
     };
 
-    const response = demoResponses[action as keyof typeof demoResponses];
+    const response = offlineResponses[action as keyof typeof offlineResponses];
     const data = type ? response[type as keyof typeof response] : response;
 
-    logWarn(`🎭 Respuesta demo generada para: ${action} (${type || 'general'})`);
+    logWarn(`🔌 Respuesta offline generada para: ${action} (${type || 'general'})`);
     
     return {
       success: true,
       data,
-      provider: 'demo'
+      provider: 'offline'
     };
   }
 
@@ -385,11 +385,11 @@ class AIManager {
   /**
    * Obtener estado de la configuración
    */
-  getStatus(): { gemini: boolean; openai: boolean; demo: boolean } {
+  getStatus(): { gemini: boolean; openai: boolean; offline: boolean } {
     return {
       gemini: !!this.geminiClient,
       openai: !!this.config.openaiApiKey,
-      demo: !this.isAvailable()
+      offline: !this.isAvailable()
     };
   }
 }

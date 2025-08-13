@@ -6,7 +6,7 @@
  * Herramientas para mejorar los tiempos de carga
  */
 
-import { lazy, ComponentType, LazyExoticComponent } from 'react';
+import { lazy, ComponentType, LazyExoticComponent, useState, useEffect, useRef } from 'react';
 
 // COMPONENTE DE LOADING OPTIMIZADO
 export const LoadingSpinner = () => (
@@ -358,8 +358,6 @@ export class PerformanceMetrics {
 
 export const performanceMetrics = PerformanceMetrics.getInstance();
 
-// IMPORTS NECESARIOS PARA LOS HOOKS
-import { useState, useEffect, useRef } from 'react';
 
 // LOG DE INICIALIZACIÓN
 console.log('⚡ Sistema de optimización de performance MAIS cargado');

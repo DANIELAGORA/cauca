@@ -126,7 +126,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleRoleChange = async (newRole: UserRole) => {
     try {
-      await loginWithRole(newRole, state.user?.name || 'Usuario Demo', 'Región Demo', 'Departamento Demo');
+      await loginWithRole(newRole, state.user?.name || 'Usuario', 'Región', 'Departamento');
       setShowRoleSelector(false);
     } catch (error) {
       logError('Error cambiando rol:', error);
