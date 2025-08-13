@@ -11,6 +11,7 @@ import {
   Upload
 } from 'lucide-react';
 import { CampaignFinanceEntry } from '../../types';
+import { logError } from '../../utils/logger';
 
 export const CuentasClaras: React.FC = () => {
   const { state, addCampaignFinanceEntry, uploadFile } = useApp();

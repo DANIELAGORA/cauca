@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { MessageCircle, Send, Users, AlertCircle, Bot, Zap, CheckCircle, LoaderCircle } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { logError } from '../../utils/logger';
 
 // --- Configuración de la API de Gemini ---
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;

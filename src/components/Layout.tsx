@@ -216,7 +216,7 @@ Responde de manera informativa y útil sobre MAIS y sus propuestas políticas.`;
               
               <div className="flex items-center ml-4 lg:ml-0">
                 <div className="relative">
-                  <img src="/app.png" alt="MAIS Logo" className="h-10 w-10 mr-3 rounded-lg shadow-md" />
+                  <img src="/mais-logo.svg" alt="MAIS Logo" className="h-10 w-10 mr-3 rounded-lg shadow-md" />
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                   </div>
@@ -551,7 +551,7 @@ Responde de manera informativa y útil sobre MAIS y sus propuestas políticas.`;
             
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div className="flex-shrink-0 flex items-center px-4">
-                <img src="/app.png" alt="MAIS" className="h-10 w-10 mr-3 rounded-lg" />
+                <img src="/mais-logo.svg" alt="MAIS" className="h-10 w-10 mr-3 rounded-lg" />
                 <h2 className="text-xl font-bold bg-gradient-to-r from-red-600 via-yellow-500 to-green-600 bg-clip-text text-transparent">
                   MAIS
                 </h2>
