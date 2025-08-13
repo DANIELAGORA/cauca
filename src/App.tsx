@@ -11,7 +11,15 @@ const LoadingScreen: React.FC = () => (
   <div className="min-h-screen bg-gradient-to-br from-red-600 via-yellow-500 to-green-600 flex items-center justify-center">
     <div className="text-white text-center">
       <div className="relative mb-8">
-        <img src="/app.ico" alt="MAIS Logo" className="w-20 h-20 mx-auto rounded-2xl animate-pulse shadow-2xl" />
+        <img 
+          src="/app.ico" 
+          alt="MAIS Logo" 
+          className="w-20 h-20 mx-auto rounded-2xl animate-pulse shadow-2xl object-cover"
+          onError={(e) => {
+            console.log('🚨 Error en loading screen, usando fallback');
+            e.currentTarget.src = '/app.png';
+          }}
+        />
         <div className="absolute inset-0 bg-gradient-to-br from-red-500/30 via-yellow-500/30 to-green-500/30 rounded-2xl animate-spin"></div>
       </div>
       <div className="space-y-2">

@@ -74,11 +74,24 @@ export const PWAInstallBanner: React.FC = () => {
       <div className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center mr-3 overflow-hidden">
               <img 
                 src="/app.ico" 
                 alt="MAIS Logo" 
-                className="w-10 h-10 rounded-lg"
+                className="w-10 h-10 rounded-lg object-cover"
+                onError={(e) => {
+                  console.log('Error cargando app.ico, intentando fallback...');
+                  // Fallback a app.png si app.ico falla
+                  e.currentTarget.src = '/app.png';
+                  e.currentTarget.onerror = () => {
+                    console.log('Error cargando app.png también');
+                    // Si todo falla, ocultar imagen y mostrar texto
+                    e.currentTarget.style.display = 'none';
+                  };
+                }}
+                onLoad={() => {
+                  console.log('✅ Logo MAIS cargado correctamente');
+                }}
               />
             </div>
             <div>
