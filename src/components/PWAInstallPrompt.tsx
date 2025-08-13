@@ -97,7 +97,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ onClose, onI
           <div className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 p-1 rounded-xl mb-6">
             <div className="bg-white p-4 rounded-lg text-center">
               <div className="w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center">
-                <img src="/icon-v2-192x192.png" alt="MAIS Logo" className="w-16 h-16 rounded-2xl" />
+                <img src="/app.png" alt="MAIS Logo" className="w-16 h-16 rounded-2xl" />
               </div>
               <h4 className="font-bold text-gray-900">MAIS Centro de Mando</h4>
               <p className="text-sm text-gray-600">Política • Gratis • PWA</p>
