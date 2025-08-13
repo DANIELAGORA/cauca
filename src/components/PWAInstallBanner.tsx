@@ -74,18 +74,12 @@ export const PWAInstallBanner: React.FC = () => {
       <div className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-yellow-500 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center mr-3">
               <img 
-                src="/mais-logo.svg" 
+                src="/app.ico" 
                 alt="MAIS Logo" 
-                className="w-6 h-6"
-                onError={(e) => {
-                  // Si el SVG falla, mostrar ícono genérico
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling.style.display = 'block';
-                }}
+                className="w-10 h-10 rounded-lg"
               />
-              <Smartphone className="w-5 h-5 text-white" style={{ display: 'none' }} />
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 text-sm">Instalar MAIS</h4>

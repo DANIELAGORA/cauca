@@ -254,11 +254,8 @@ export default defineConfig({
           }
         ],
       },
-      // Configuración para generar iconos PNG a partir del SVG
-      // Esto requiere que el SVG sea compatible con la generación de PNGs
-      // y que el plugin tenga las dependencias necesarias (ej. sharp)
-      // Si esto falla, necesitarás generar los PNGs manualmente a partir del SVG.
-      includeAssets: ['mais-logo.svg'],
+      // Incluir assets principales del app
+      includeAssets: ['app.ico', 'app.png'],
     }),
   ],
   // CONFIGURACIÓN FINAL DE DEPENDENCIAS (CORREGIDA)
