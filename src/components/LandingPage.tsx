@@ -161,7 +161,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 rounded-lg flex items-center justify-center">
-                <img src="/icon-v2-192x192.png" alt="MAIS Logo" className="w-12 h-12 rounded-lg" />
+                <img src="/app.png" alt="MAIS Logo" className="w-12 h-12 rounded-lg" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">MAIS Cauca</h1>
@@ -193,8 +193,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
               Plataforma tecnológica integral para la gestión política del Movimiento Alternativo 
-              Indígena y Social en el departamento del Cauca. Liderado por José Luis Diago como 
-              Director Departamental.
+              Indígena y Social en el departamento del Cauca. Bajo la dirección de 
+              <strong className="text-red-700"> José Luis Diago Franco</strong>, designado como 
+              Presidente Departamental encargado por Resolución 026-1 de 2025 del Comité Ejecutivo Nacional.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
@@ -345,22 +346,91 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
         </div>
       </section>
 
-      {/* Leadership Section */}
+      {/* MAIS Identity Section */}
+      <section className="py-20 bg-gradient-to-br from-red-600 via-yellow-500 to-green-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-white mb-12">
+            <h3 className="text-4xl font-bold mb-6">
+              🌽 Movimiento Alternativo Indígena y Social
+            </h3>
+            <div className="max-w-4xl mx-auto">
+              <p className="text-xl text-yellow-100 mb-6">
+                "Reivindicando la semilla generadora de vida y elemento común de las culturas nativas de América"
+              </p>
+              <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6">
+                <h4 className="text-2xl font-bold mb-4">Nuestra Identidad</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                  <div className="bg-yellow-400 bg-opacity-20 rounded-lg p-4">
+                    <div className="text-4xl mb-2">🌽</div>
+                    <h5 className="font-bold text-yellow-200">Mazorca Amarilla</h5>
+                    <p className="text-sm text-yellow-100">Sabiduría ancestral y energía</p>
+                  </div>
+                  <div className="bg-green-500 bg-opacity-20 rounded-lg p-4">
+                    <div className="text-4xl mb-2">🌿</div>
+                    <h5 className="font-bold text-green-200">Hojas Verdes</h5>
+                    <p className="text-sm text-green-100">Vida, territorio y Madre Tierra</p>
+                  </div>
+                  <div className="bg-red-500 bg-opacity-20 rounded-lg p-4">
+                    <div className="text-4xl mb-2">❤️</div>
+                    <h5 className="font-bold text-red-200">Fondo Rojo</h5>
+                    <p className="text-sm text-red-100">Lucha e identidad de los pueblos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Official Resolution Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Resolución Oficial MAIS
+            </h3>
+            <div className="bg-gray-50 border-l-4 border-red-600 p-6 max-w-4xl mx-auto text-left">
+              <div className="flex items-start space-x-4">
+                <Shield className="w-8 h-8 text-red-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">
+                    Resolución Número 026-1 de 2025
+                  </h4>
+                  <p className="text-gray-700 mb-4">
+                    <strong>Emisor:</strong> Comité Ejecutivo Nacional del Movimiento Alternativo Indígena y Social – MAIS<br />
+                    <strong>Fecha:</strong> 31 de julio de 2025<br />
+                    <strong>Lugar:</strong> Bogotá, D.C., Colombia
+                  </p>
+                  <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <h5 className="font-bold text-red-900 mb-2">DECISIÓN OFICIAL:</h5>
+                    <p className="text-red-800">
+                      Se designa a <strong>José Luis Diago Franco</strong> (C.C. 10.535.839), 
+                      Concejal electo por MAIS en Popayán, como <strong>Presidente Departamental 
+                      encargado del MAIS en Cauca</strong>, con carácter transitorio y provisional 
+                      hasta la realización de la Convención Departamental del Cauca.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Leadership Section */}
           <div className="text-center">
             <h3 className="text-3xl font-bold text-gray-900 mb-8">
-              Liderazgo Departamental
+              Liderazgo Departamental Oficial
             </h3>
             <div className="bg-gradient-to-r from-red-600 via-yellow-600 to-green-600 p-8 rounded-2xl text-white max-w-2xl mx-auto">
               <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full mx-auto mb-6 flex items-center justify-center">
                 <Users className="w-12 h-12" />
               </div>
-              <h4 className="text-2xl font-bold mb-2">José Luis Diago</h4>
-              <p className="text-lg mb-4">Director Departamental - Cauca</p>
+              <h4 className="text-2xl font-bold mb-2">José Luis Diago Franco</h4>
+              <p className="text-lg mb-2">Presidente Departamental Encargado - Cauca</p>
+              <p className="text-sm text-yellow-200 mb-4">C.C. 10.535.839 | Concejal Electo por MAIS - Popayán</p>
               <p className="text-yellow-100">
-                Líder de la estructura territorial del MAIS en el Cauca, coordinando 
-                las actividades políticas y sociales en todos los municipios del departamento.
+                Designado oficialmente por el Comité Ejecutivo Nacional para liderar la estructura 
+                territorial del MAIS en el Cauca, coordinando las actividades políticas y sociales 
+                en todos los municipios del departamento bajo la Resolución 026-1 de 2025.
               </p>
             </div>
           </div>
@@ -393,7 +463,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center">
-                  <img src="/icon-v2-192x192.png" alt="MAIS Logo" className="w-10 h-10 rounded-lg" />
+                  <img src="/app.png" alt="MAIS Logo" className="w-10 h-10 rounded-lg" />
                 </div>
                 <span className="text-xl font-bold">MAIS Cauca</span>
               </div>
@@ -402,11 +472,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAccessClick }) => {
               </p>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Contacto</h4>
+              <h4 className="text-lg font-semibold mb-4">Liderazgo Oficial</h4>
               <div className="space-y-2 text-gray-400">
-                <p>Director: José Luis Diago</p>
-                <p>Email: joseluisdiago@maiscauca.com</p>
-                <p>Cauca, Colombia</p>
+                <p><strong className="text-white">José Luis Diago Franco</strong></p>
+                <p>Presidente Departamental Encargado</p>
+                <p>C.C. 10.535.839</p>
+                <p>Resolución 026-1 de 2025</p>
+                <p>Popayán, Cauca, Colombia</p>
               </div>
             </div>
             <div>

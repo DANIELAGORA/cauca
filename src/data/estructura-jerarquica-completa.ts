@@ -23,18 +23,18 @@ export interface CandidatoElecto {
 // CONTRASEÑA UNIVERSAL
 export const MASTER_PASSWORD = 'agoramais2025';
 
-// DIRECTOR DEPARTAMENTAL
+// DIRECTOR DEPARTAMENTAL - RESOLUCIÓN 026-1 DE 2025
 export const directorDepartamental: CandidatoElecto = {
   id: 'director-cauca-real',
   nombre: 'José Luis Diago Franco',
   email: 'joseluisdiago@maiscauca.com',
   telefono: '3104015537',
-  cedula: '',
+  cedula: '10.535.839',
   role: 'director-departamental',
-  corporacion: 'DIRECCION',
+  corporacion: 'PRESIDENTE DEPARTAMENTAL ENCARGADO',
   municipio: 'Popayán',
   estado: 'en-ejercicio',
-  fechaEleccion: '2023-10-29',
+  fechaEleccion: '2025-07-31', // Fecha Resolución 026-1
   partidoCodigo: '00012',
   partidoNombre: 'MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL "MAIS"',
   genero: 'M',

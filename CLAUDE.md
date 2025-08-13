@@ -9,31 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Production URL**: https://maiscauca.netlify.app  
 **Current State**: 100% Operational with Real Data Integration  
-**Developer**: Daniel Lopez "DSimnivaciones" Wramba fxiw  
 **Type**: Political Campaign Management PWA - Production Ready
-
-## ✅ CONFIRMED LIVE FEATURES (All Verified Working)
-
-### 🔐 User Authentication & Access Control
-- **Supabase Auth**: Fully configured and operational
-- **Registration**: Email/password signup with role selection
-- **Login**: Secure authentication with session management
-- **7 Role-Based Dashboards**: Each role has specific permissions and UI
-- **User Management**: Hierarchical user creation system
-
-### 👥 Current Live Users
-The system has 96+ real political representatives from MAIS Cauca:
-- **1 Director Departamental**: José Luis Diago Franco (joseluisdiago@maiscauca.com)
-- **5 Alcaldes**: Real elected mayors with verified data
-- **7 Diputados**: Asamblea Departamental del Cauca
-- **83 Concejales**: Municipal councilors across Cauca
-- **Master Password**: "agoramais2025" (for admin access)
-
-### 🏗️ Database Integration (Supabase)
-- **Live Tables**: `user_profiles`, `messages`, `databases`
-- **Real-time Subscriptions**: Live message updates
-- **Storage Bucket**: File uploads to "files" bucket
-- **Row Level Security**: Configured for role-based access
 
 ## Essential Commands
 
@@ -47,6 +23,16 @@ npm run lint         # Run ESLint
 npm run type-check   # TypeScript type checking
 ```
 
+### Database & User Management Scripts
+```bash
+npm run test:users           # Test all user authentication
+npm run setup:users          # Setup user profiles
+npm run check:database       # Verify database structure
+npm run inspect:database     # Inspect real database data
+npm run test:production      # Run complete production test suite
+npx tsx scripts/final-system-verification.ts  # Full system verification
+```
+
 ### Deployment
 ```bash
 npm run deploy:netlify  # Deploy to Netlify (primary)
@@ -54,7 +40,7 @@ npm run deploy:vercel   # Deploy to Vercel
 npm run deploy          # Deploy with Firebase (legacy)
 ```
 
-## Production Architecture
+## Architecture Overview
 
 ### Tech Stack
 - **Frontend**: React 18 + TypeScript + Vite 7.0.6
@@ -65,156 +51,154 @@ npm run deploy          # Deploy with Firebase (legacy)
 - **AI Integration**: Google Gemini AI (fully configured)
 - **PWA**: Optimized service worker, installable app
 - **Deployment**: Netlify with automated CI/CD from GitHub
-- **Domain**: Custom domain maiscauca.netlify.app
 
-### Live Production Database (Supabase)
+### Core Application Structure
 
-#### Production Tables
-- **profiles**: User profiles with role-based permissions
-- **messages**: Real-time messaging between users and roles
-- **databases**: File uploads and campaign document management
-- **RLS Policies**: Configured for secure data access by role
+#### State Management (`src/contexts/AppContext.tsx`)
+- **Central state hub** with Supabase integration
+- Real-time subscriptions for messages and data updates
+- User authentication state management
+- Hierarchical user management system
+- All data operations flow through this context
 
-#### Production Authentication
-- **Supabase Auth**: Live user registration and login
-- **7 User Roles**: Each with specific dashboard and permissions
-- **Real Sessions**: JWT tokens with automatic renewal
-- **Email Verification**: Optional email confirmation system
+#### Database Integration (`src/lib/supabase.ts`)
+- **Centralized Supabase client** with optimized configuration
+- Type-safe database operations with TypeScript
+- Auto-refresh tokens and persistent sessions
+- Configured for production with security headers
 
-#### Real-Time Features
-- **Live Messaging**: Instant message updates via Supabase subscriptions
-- **File Uploads**: Direct upload to Supabase Storage bucket 'files'
-- **User Management**: Role-based access control implemented
+#### Authentication Flow
+1. **Login/Register**: Email/password via Supabase Auth
+2. **Profile Creation**: Automatic profile in `user_profiles` table
+3. **Role Assignment**: 7-tier hierarchical role system
+4. **Dashboard Routing**: Role-specific UI components
 
-## Production Environment Configuration
+### Dashboard Architecture (`src/components/dashboards/`)
 
-### Environment Variables (Configured)
-```bash
-# Supabase Production (LIVE)
-VITE_SUPABASE_URL=https://djgkjtqpzedxnqwqdcjx.supabase.co
-VITE_SUPABASE_ANON_KEY=[Configured in Netlify]
+**7 Role-Specific Dashboards:**
+- `NationalDashboard.tsx` - National committee oversight
+- `RegionalDashboard.tsx` - Regional/departmental coordination  
+- `DepartmentalDashboard.tsx` - Local departmental operations
+- `CandidateDashboard.tsx` - Personal campaign management
+- `InfluencerDashboard.tsx` - Social media management
+- `LeaderDashboard.tsx` - Community mobilization
+- `VoterDashboard.tsx` - Citizen participation
 
-# AI Integration (ACTIVE)
-VITE_GEMINI_API_KEY=[Configured in GitHub Secrets]
+**Each dashboard includes:**
+- Role-specific widgets and analytics
+- Hierarchical data access based on user permissions
+- Real-time messaging and file management
+- AI-powered insights via Google Gemini
 
-# Production Settings
-NODE_ENV=production
-GENERATE_SOURCEMAP=false
-```
+### Widget System (`src/components/widgets/`)
 
-### Automated Deployment (ACTIVE)
-- **GitHub Actions**: Auto-deploy on every push to main
-- **Netlify Integration**: Automatic build and deployment
-- **Site ID**: fa8b1d78-6aff-4bcd-96bf-de490e8179be
-- **Domain**: maiscauca.netlify.app (custom domain configured)
+**Core Widgets:**
+- `MessageCenter.tsx` - Real-time messaging with Supabase subscriptions
+- `MetricsGrid.tsx` - Live analytics from campaign data
+- `FileUpload.tsx` - Supabase Storage integration
+- `UserManagement.tsx` - Hierarchical user creation
+- `CuentasClaras.tsx` - Financial transparency system
+- `TerritoryMap.tsx` - Geographic campaign visualization
 
-### Component Architecture
-```
-src/components/
-├── dashboards/           # 7 role-specific dashboards
-├── widgets/             # Real data widgets (no mock data)
-├── Layout.tsx           # Production layout with auth
-└── RoleSelector.tsx     # Real user role switching
-```
+### Database Schema (Supabase)
 
-## Production Implementation Requirements
+**Core Tables:**
+- `user_profiles` - User data with role-based permissions
+- `messages` - Real-time messaging system
+- `databases` - File uploads and document management
+- `campaign_finances` - Financial tracking
+- `campaigns` - Campaign data and analytics
 
-### Critical Files Requiring Updates
-1. **src/contexts/AppContext.tsx**: Remove demo data, add Supabase integration
-2. **src/utils/ai.ts**: Remove fallback responses, require API keys  
-3. **src/App.tsx**: Replace mock auth with Supabase Auth
-4. **All dashboard components**: Connect to real Supabase data
+**Security:** Row Level Security (RLS) policies enforce role-based data access
 
-### Database Integration (`supabase_schema.sql`)
-- Tables: `profiles`, `messages`, `databases`
-- RLS policies configured for role-based access
-- Storage bucket `files` for media uploads
-- Real-time subscriptions for live updates
+### Environment Configuration
 
-### Security Implementation
-- CSP headers in `netlify.toml` configured for Supabase
-- API key environment variables (never in code)
-- Supabase RLS enforcing data access controls
-- Production security headers enabled
+**Production Environment Variables (Netlify):**
+- `VITE_SUPABASE_URL` - Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
+- `VITE_GEMINI_API_KEY` - Google Gemini AI API key
 
-## Build Configuration
+**Security Notes:**
+- All API keys managed via Netlify environment variables
+- No sensitive data in code or repository
+- CSP headers configured for Supabase and AI services
 
-### Vite Config (`vite.config.ts`)
-- Manual chunk splitting optimized for production
-- PWA manifest configured for political campaign use
-- Service worker with API caching for Gemini AI
-- Build target: `esnext` with Terser minification
+### Real Data Integration
 
-### Netlify Configuration (`netlify.toml`)
-- Node.js 18+ required
-- Security headers for production deployment  
-- SPA routing for React application
-- Asset optimization and caching strategies
+**Live Users (96+ political representatives):**
+- 1 Director Departamental
+- 5 Alcaldes (mayors)
+- 7 Diputados (assembly deputies)  
+- 83 Concejales (councilors)
+- Universal password: `agoramais2025`
 
-## Live User Management System
+**Data Sources:**
+- Real electoral data from MAIS Cauca
+- Live Supabase tables with authentic political representatives
+- Real-time messaging between actual campaign members
+- Authentic financial and campaign data
 
-### 7 Production User Roles (ACTIVE)
+### Build Configuration
 
-#### 1. 🏛️ Comité Ejecutivo Nacional
-- **Permissions**: Full system administration
-- **Dashboard**: Complete oversight and control panel
-- **Functions**: User management, global analytics, system configuration
+**Vite Configuration (`vite.config.ts`):**
+- Manual chunk splitting for optimal loading
+- PWA manifest for political campaign use
+- Service worker with Gemini AI caching
+- Production-optimized build settings
 
-#### 2. 🗺️ Líder Regional  
-- **Permissions**: Multi-territory coordination
-- **Dashboard**: Regional maps, territorial analytics
-- **Functions**: Departmental coordination, regional campaigns
-
-#### 3. 🏢 Comité Departamental
-- **Permissions**: Local departmental operations
-- **Dashboard**: Local finances, departmental campaigns
-- **Functions**: Municipal coordination, local resource management
-
-#### 4. 🎯 Candidato
-- **Permissions**: Personal campaign management
-- **Dashboard**: Campaign tools, personal metrics
-- **Functions**: Content creation, campaign scheduling, voter outreach
-
-#### 5. 📱 Influenciador Digital
-- **Permissions**: Social media management
-- **Dashboard**: Social analytics, content scheduler
-- **Functions**: Social media automation, engagement metrics
-
-#### 6. 👥 Líder Comunitario
-- **Permissions**: Local community mobilization
-- **Dashboard**: Community tools, local messaging
-- **Functions**: Event organization, grassroots mobilization
-
-#### 7. 🗳️ Votante/Simpatizante
-- **Permissions**: Citizen participation
-- **Dashboard**: Information access, participation tools
-- **Functions**: Feedback, donations, civic engagement
-
-### User Registration Process (LIVE)
-1. **Access**: https://maiscauca.netlify.app
-2. **Register**: Email + password + role selection
-3. **Automatic**: Profile created in Supabase with role permissions
-4. **Immediate**: Access to role-specific dashboard
-
-### Live Data Sources
-All widgets connect to real Supabase data:
-- **MessageCenter**: Real-time messaging with live subscriptions
-- **MetricsGrid**: Live analytics from actual campaign data  
-- **FileUpload**: Supabase Storage with instant file processing
-- **CuentasClaras**: Real financial transparency with live updates
-
-## Performance & Monitoring
-
-### Bundle Size Management
-- Vendor chunk: React core (separate loading)
-- Charts chunk: Recharts visualization library
-- UI chunk: Lucide icons + Framer Motion
-- AI chunk: Google Generative AI client
-
-### PWA Features
+**PWA Features:**
 - Offline-first with service worker
-- Push notifications for campaign updates  
+- Push notifications capability
 - Install prompt for mobile/desktop
 - Background sync for offline actions
 
-When working on this codebase, prioritize real data integration and remove all demo/mock functionality. All features must work with production Supabase backend.
+### Deployment Pipeline
+
+**Netlify Configuration (`netlify.toml`):**
+- Production security headers
+- CSP configured for Supabase and AI services
+- Asset optimization and caching
+- SPA routing for React application
+
+**GitHub Integration:**
+- Auto-deploy on push to main branch
+- Environment variables managed in Netlify
+- Site ID: fa8b1d78-6aff-4bcd-96bf-de490e8179be
+
+### Hierarchical User System
+
+**Role Hierarchy (7 levels):**
+1. Comité Ejecutivo Nacional - Full system administration
+2. Líder Regional - Multi-territory coordination
+3. Comité Departamental - Local departmental operations
+4. Candidato - Personal campaign management
+5. Influenciador Digital - Social media management
+6. Líder Comunitario - Local community mobilization
+7. Votante/Simpatizante - Citizen participation
+
+**Permission System:**
+- Each role can create and manage specific lower-tier roles
+- Data access restricted by hierarchy level via RLS policies
+- Territory-based permissions for geographic campaigns
+
+### Development Guidelines
+
+**Working with Real Data:**
+- All features must integrate with production Supabase backend
+- Remove any demo/mock functionality when implementing new features
+- Test with real user accounts using verification scripts
+- Maintain data integrity for live political representatives
+
+**Security Requirements:**
+- Never commit API keys or sensitive data
+- Use environment variables for all external service credentials
+- Implement proper RLS policies for new database tables
+- Follow CSP guidelines for any new external integrations
+
+**Testing:**
+- Use provided scripts to verify user authentication
+- Test role-specific dashboard functionality
+- Verify real-time features with multiple user sessions
+- Run production verification before major deployments
+
+When working on this codebase, prioritize real data integration and maintain the production-ready state for active political campaign operations.
