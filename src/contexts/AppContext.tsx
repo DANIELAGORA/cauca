@@ -181,7 +181,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           esRealElecto: false,
           region: profile?.region || profile?.municipality,
           department: profile?.department,
-          municipality: profile?.municipality,
+          municipality: profile?.municipality || profile?.metadata?.municipio,
           phone: profile?.phone,
           position: profile?.position,
           election_date: profile?.election_date,
