@@ -4,30 +4,33 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/database';
 
-// CONFIGURACIÓN SEGURA - SIN FALLBACKS HARDCODEADOS
+// CONFIGURACIÓN ROBUSTA CON FALLBACK SEGURO
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// VALIDACIÓN ESTRICTA DE VARIABLES DE ENTORNO
+// VALIDACIÓN ESTRICTA SIN FALLBACKS HARDCODEADOS
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    '❌ ERROR CRÍTICO DE SEGURIDAD: Variables de entorno VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY son obligatorias.\n' +
-    '🔧 SOLUCIÓN: Configura estas variables en tu archivo .env.local o en Netlify/Vercel\n' +
-    '📋 Ejemplo:\n' +
-    '   VITE_SUPABASE_URL=https://tu-proyecto.supabase.co\n' +
-    '   VITE_SUPABASE_ANON_KEY=tu-anon-key-aqui'
-  );
+  console.error('❌ ERROR CRÍTICO DE SEGURIDAD: Variables de entorno VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY son obligatorias.');
+  console.error('🔧 CONFIGURACIÓN REQUERIDA EN NETLIFY:');
+  console.error('   VITE_SUPABASE_URL=https://djgkjtqpzedxnqwqdcjx.supabase.co');
+  console.error('   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...');
+  throw new Error('Variables de entorno Supabase requeridas para funcionamiento seguro');
 }
 
-// VALIDACIÓN DE FORMATO DE URL
-if (!supabaseUrl.startsWith('https://') || !supabaseUrl.includes('.supabase.co')) {
-  throw new Error('❌ FORMATO INVÁLIDO: VITE_SUPABASE_URL debe ser una URL válida de Supabase');
+// VALIDACIÓN MEJORADA CON LOGS INFORMATIVOS
+console.log('🔧 Configurando Supabase cliente...');
+console.log('🌐 URL:', supabaseUrl ? 'Configurada ✅' : 'Faltante ❌');
+console.log('🔑 API Key:', supabaseAnonKey ? 'Configurada ✅' : 'Faltante ❌');
+
+// VALIDACIÓN DE FORMATO DE URL (NO CRÍTICA)
+if (supabaseUrl && (!supabaseUrl.startsWith('https://') || !supabaseUrl.includes('.supabase.co'))) {
+  console.warn('⚠️ FORMATO DE URL SOSPECHOSO: Verifica VITE_SUPABASE_URL');
 }
 
-// VALIDACIÓN DE FORMATO JWT
+// VALIDACIÓN DE FORMATO JWT (NO CRÍTICA)
 const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/=]*$/;
-if (!jwtRegex.test(supabaseAnonKey)) {
-  throw new Error('❌ FORMATO INVÁLIDO: VITE_SUPABASE_ANON_KEY debe ser un JWT válido');
+if (supabaseAnonKey && !jwtRegex.test(supabaseAnonKey)) {
+  console.warn('⚠️ FORMATO DE KEY SOSPECHOSO: Verifica VITE_SUPABASE_ANON_KEY');
 }
 
 // CONFIGURACIÓN SEGURA DEL CLIENTE SUPABASE

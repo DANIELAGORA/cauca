@@ -7,29 +7,63 @@ import { LandingPageNew } from './components/LandingPageNew';
 import { PWAInstallBanner } from './components/PWAInstallBanner';
 import { logInfo } from './utils/logger';
 
-const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-gradient-to-br from-red-600 via-yellow-500 to-green-600 flex items-center justify-center">
-    <div className="text-white text-center">
-      <div className="relative mb-8">
-        <img 
-          src="/app.ico" 
-          alt="MAIS Logo" 
-          className="w-20 h-20 mx-auto rounded-2xl animate-pulse shadow-2xl object-cover"
-          onError={(e) => {
-            console.log('🚨 Error en loading screen, usando fallback');
-            e.currentTarget.src = '/app.png';
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-red-500/30 via-yellow-500/30 to-green-500/30 rounded-2xl animate-spin"></div>
-      </div>
-      <div className="space-y-2">
-        <p className="text-3xl font-bold bg-gradient-to-r from-yellow-300 to-green-300 bg-clip-text text-transparent">MAIS Cauca</p>
-        <p className="text-xl">Centro de Mando Político</p>
-        <p className="text-sm opacity-90">Conectando con Supabase...</p>
+const LoadingScreen: React.FC = () => {
+  const [loadingStep, setLoadingStep] = React.useState('Iniciando sistema...');
+  const [logoError, setLogoError] = React.useState(false);
+
+  React.useEffect(() => {
+    const steps = [
+      'Iniciando sistema...',
+      'Configurando conexión...',
+      'Verificando credenciales...',
+      'Preparando interfaz...',
+      'Casi listo...'
+    ];
+    
+    let currentStep = 0;
+    const interval = setInterval(() => {
+      currentStep = (currentStep + 1) % steps.length;
+      setLoadingStep(steps[currentStep]);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-red-600 via-yellow-500 to-green-600 flex items-center justify-center">
+      <div className="text-white text-center">
+        <div className="relative mb-8">
+          {!logoError ? (
+            <img 
+              src="/app.png" 
+              alt="MAIS Logo" 
+              className="w-20 h-20 mx-auto rounded-2xl animate-pulse shadow-2xl object-cover"
+              onError={() => {
+                console.log('🚨 app.png falló, intentando fallback');
+                setLogoError(true);
+              }}
+            />
+          ) : (
+            <div className="w-20 h-20 mx-auto rounded-2xl bg-white/20 flex items-center justify-center shadow-2xl">
+              <span className="text-3xl font-bold">M</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/30 via-yellow-500/30 to-green-500/30 rounded-2xl animate-spin"></div>
+        </div>
+        <div className="space-y-2">
+          <p className="text-3xl font-bold bg-gradient-to-r from-yellow-300 to-green-300 bg-clip-text text-transparent">MAIS Cauca</p>
+          <p className="text-xl">Centro de Mando Político</p>
+          <p className="text-sm opacity-90">{loadingStep}</p>
+          <div className="w-64 mx-auto mt-4">
+            <div className="bg-white/20 rounded-full h-2 overflow-hidden">
+              <div className="bg-gradient-to-r from-yellow-400 to-green-400 h-full rounded-full animate-pulse"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AuthScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <div className="min-h-screen bg-gradient-to-br from-red-600 via-yellow-500 to-green-600 flex items-center justify-center p-4">
@@ -60,6 +94,7 @@ const AuthScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 const AppContent: React.FC = () => {
   const { state } = useApp();
   const [showAuth, setShowAuth] = useState(false);
+  const [activeSection, setActiveSection] = useState('dashboard');
 
   const handleShowAuth = useCallback(() => {
     setShowAuth(true);
@@ -71,6 +106,11 @@ const AppContent: React.FC = () => {
     logInfo('Ocultando formulario de autenticación');
   }, []);
 
+  const handleNavigationChange = useCallback((section: string) => {
+    setActiveSection(section);
+    logInfo('🔀 App - Cambiando a sección:', section);
+  }, []);
+
   if (state.isLoading) {
     return <LoadingScreen />;
   }
@@ -78,8 +118,8 @@ const AppContent: React.FC = () => {
   if (state.user) {
     return (
       <>
-        <Layout>
-          <Dashboard />
+        <Layout activeSection={activeSection}>
+          <Dashboard activeSection={activeSection} />
         </Layout>
         <PWAInstallBanner />
       </>

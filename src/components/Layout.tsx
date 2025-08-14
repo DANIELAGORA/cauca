@@ -38,10 +38,11 @@ if (apiKey) {
 
 interface LayoutProps {
   children: React.ReactNode;
+  activeSection?: string;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { state, logout, loginWithRole } = useApp();
+export const Layout: React.FC<LayoutProps> = ({ children, activeSection: propActiveSection }) => {
+  const { state, signOut } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications] = useState(3);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
@@ -55,7 +56,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
-  const [activeSection, setActiveSection] = useState('dashboard');
+  const [activeSection, setActiveSection] = useState(propActiveSection || 'dashboard');
 
   // PWA Installation
   useEffect(() => {
@@ -90,8 +91,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleMobileNavigation = (section: string) => {
     setActiveSection(section);
-    // Aquí puedes agregar lógica adicional para cambiar la vista
-    // Por ejemplo, emitir eventos o cambiar el estado global
+    logInfo('📱 Navegación móvil - Cambiando a sección:', section);
+    // Lógica adicional para cambiar la vista será manejada por el Dashboard
   };
 
   const roleNames: Record<string, string> = {
@@ -126,7 +127,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleRoleChange = async (newRole: UserRole) => {
     try {
-      await loginWithRole(newRole, state.user?.name || 'Usuario', 'Región', 'Departamento');
+      // Temporalmente deshabilitado - función loginWithRole no existe
+      alert(`🔄 Cambio de rol a ${newRole} temporalmente deshabilitado durante la actualización de seguridad`);
       setShowRoleSelector(false);
     } catch (error) {
       logError('Error cambiando rol:', error);
@@ -395,7 +397,7 @@ Responde de manera informativa y útil sobre MAIS y sus propuestas políticas.`;
 
                 {/* Logout */}
                 <button
-                  onClick={logout}
+                  onClick={signOut}
                   className="p-3 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 transform hover:scale-105 group"
                   title="Cerrar Sesión"
                 >
@@ -629,7 +631,7 @@ Responde de manera informativa y útil sobre MAIS y sus propuestas políticas.`;
                     <button
                       onClick={() => {
                         setSidebarOpen(false);
-                        logout();
+                        signOut();
                       }}
                       className="group flex items-center px-4 py-2 text-sm font-medium text-red-600 rounded-lg hover:text-red-900 hover:bg-red-100 w-full text-left transition-colors"
                     >
@@ -647,7 +649,7 @@ Responde de manera informativa y útil sobre MAIS y sus propuestas políticas.`;
       {/* Main Content */}
       <div className="pt-16 pb-20 md:pb-0">
         <main className="flex-1">
-          {children}
+          {React.cloneElement(children as React.ReactElement, { activeSection })}
         </main>
       </div>
 

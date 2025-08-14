@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { logInfo } from '../utils/logger';
 import { RegionalDashboard } from './dashboards/RegionalDashboard';
@@ -10,14 +10,20 @@ import { InfluencerDashboard } from './dashboards/InfluencerDashboard';
 import { LeaderDashboard } from './dashboards/LeaderDashboard';
 import { VoterDashboard } from './dashboards/VoterDashboard';
 import { ConcejalDashboard } from './dashboards/ConcejalDashboard';
+import { UserProfile } from './UserProfile';
 import { UserRole } from '../types';
 
-export const Dashboard: React.FC = () => {
+interface DashboardProps {
+  activeSection?: string;
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({ activeSection = 'dashboard' }) => {
   const { state } = useApp();
 
   logInfo('🔍 Dashboard - Estado actual:', state);
   logInfo('🔍 Dashboard - Usuario actual:', state.user);
   logInfo('🔍 Dashboard - Rol del usuario:', state.user?.role);
+  logInfo('🔍 Dashboard - Sección activa:', activeSection);
 
   if (state.isLoading) {
     return (
@@ -25,6 +31,11 @@ export const Dashboard: React.FC = () => {
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600"></div>
       </div>
     );
+  }
+
+  // CRÍTICO: Manejo de ruta de perfil para TODOS los usuarios
+  if (activeSection === 'profile') {
+    return <UserProfile />;
   }
 
   // Detectar si es José Luis Diago (Director especial)

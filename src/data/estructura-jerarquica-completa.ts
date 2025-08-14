@@ -21,7 +21,19 @@ export interface CandidatoElecto {
 }
 
 // CONTRASEÑA UNIVERSAL
-export const MASTER_PASSWORD = 'agoramais2025';
+// CRÍTICO: CONTRASEÑA UNIVERSAL REMOVIDA POR SEGURIDAD
+// Los usuarios deben establecer sus propias contraseñas seguras
+// export const MASTER_PASSWORD = 'agoramais2025'; // REMOVIDO POR SEGURIDAD
+
+// Sistema de contraseñas temporales para nuevos usuarios
+export const generateTemporaryPassword = (): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let password = 'Mais'; // Prefijo identificable
+  for (let i = 0; i < 8; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password + '2025!'; // Sufijo con año y carácter especial
+};
 
 // DIRECTOR DEPARTAMENTAL - RESOLUCIÓN 026-1 DE 2025
 export const directorDepartamental: CandidatoElecto = {
@@ -730,5 +742,5 @@ export default {
   concejalesElectos,
   jalLocal,
   estadisticasCompletas,
-  MASTER_PASSWORD
+  generateTemporaryPassword
 };

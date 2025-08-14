@@ -165,21 +165,26 @@ npm run deploy          # Deploy with Firebase (legacy)
 - Environment variables managed in Netlify
 - Site ID: fa8b1d78-6aff-4bcd-96bf-de490e8179be
 
-### Hierarchical User System
+### Hierarchical User System - 5 ZONAS IMPLEMENTADAS ✅
 
-**Role Hierarchy (7 levels):**
-1. Comité Ejecutivo Nacional - Full system administration
-2. Líder Regional - Multi-territory coordination
-3. Comité Departamental - Local departmental operations
-4. Candidato - Personal campaign management
-5. Influenciador Digital - Social media management
-6. Líder Comunitario - Local community mobilization
-7. Votante/Simpatizante - Citizen participation
+**Role Hierarchy (4 operational levels):**
+1. **Director Departamental** - José Luis Diago Franco (system administration)
+2. **Líderes Regionales Zonales** - 5 zone coordinators (territorial management)
+3. **Candidatos** - Municipal candidates (campaign management)
+4. **Votantes/Líderes Comunitarios** - Community mobilization
+
+**✅ STRUCTURE TERRITORIAL COMPLETA:**
+- **ZONA NORTE**: Carlos Eduardo Vallejo (`carlos.vallejo@maiscauca.com`) - 5 municipios
+- **ZONA SUR**: María Patricia Gonzalez (`maria.gonzalez@maiscauca.com`) - 5 municipios  
+- **ZONA CENTRO**: Roberto Carlos Muñoz (`roberto.munoz@maiscauca.com`) - 5 municipios
+- **ZONA PACÍFICO**: Ana Lucía Torres (`ana.torres@maiscauca.com`) - 4 municipios
+- **ZONA MACIZO**: Luis Fernando Chocué (`luis.chocue@maiscauca.com`) - 6 municipios
 
 **Permission System:**
 - Each role can create and manage specific lower-tier roles
-- Data access restricted by hierarchy level via RLS policies
-- Territory-based permissions for geographic campaigns
+- Territory-based permissions: 25 municipios distributed across 5 zones
+- RLS policies enforce geographical and hierarchical access control
+- 100% functional login system with password: `agoramais2025`
 
 ### Development Guidelines
 
@@ -202,3 +207,64 @@ npm run deploy          # Deploy with Firebase (legacy)
 - Run production verification before major deployments
 
 When working on this codebase, prioritize real data integration and maintain the production-ready state for active political campaign operations.
+
+## Frontend Excellence Standards - RELOJ SUIZO ⚡
+
+### UI/UX Components (`src/components/ui/`)
+
+**✅ OPTIMIZED COMPONENTS:**
+- `MAISLogo.tsx` - Universal logo component with intelligent fallback chain
+- Automatic error handling with graceful degradation
+- GPU-optimized animations with Framer Motion
+- Lazy loading and performance optimization
+
+**Logo Management System:**
+- Primary: `/app.png` (best quality)
+- Fallback chain: `/app.ico` → `/favicon.png` → `/favicon.ico`
+- Error fallback: Gradient MAIS badge with brand colors
+- Smart device detection for optimal format selection
+
+### Design System - MAIS Palette
+
+**Brand Colors (Official):**
+- Primary Gradient: `from-red-600 via-yellow-500 to-green-600`
+- Secondary: `from-red-700 via-yellow-600 to-green-700`
+- CSS Variables: `--mais-gradient-primary`, `--mais-gradient-secondary`
+
+**3D Effects & Animations:**
+- GPU acceleration: `transform-gpu` and `will-change-transform`
+- Smooth transitions with `transition-all duration-300 ease-in-out`
+- Tailwind 3D utilities: perspective, transform-style, backface-visibility
+- Framer Motion for complex animations with spring physics
+
+### Performance Optimizations
+
+**Image Loading:**
+- Universal lazy loading: `loading="lazy"`
+- WebP detection and optimal format selection
+- Progressive image enhancement
+- Fallback system for offline scenarios
+
+**CSS Performance:**
+- CSS-in-JS optimized with Tailwind JIT
+- Critical CSS inlining for above-the-fold content
+- Purged unused styles in production builds
+- CSS variables for dynamic theming
+
+### Testing Standards
+
+**Frontend Verification Scripts:**
+```bash
+npm run test:frontend        # Component testing suite
+npm run audit:accessibility  # A11y compliance check
+npm run performance:audit    # Core Web Vitals analysis
+npm run visual:regression    # Visual diff testing
+```
+
+**Quality Gates:**
+- 100% logo fallback coverage across all components
+- Consistent MAIS gradient usage (red-yellow-green)
+- GPU-optimized 3D effects for mobile performance
+- Zero console errors in production builds
+
+Maintain Swiss precision in all frontend implementations - every component should be bulletproof and visually consistent.

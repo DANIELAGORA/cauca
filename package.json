@@ -28,6 +28,9 @@
     "deploy:vercel": "npm run build && vercel --prod",
     "type-check": "tsc --noEmit",
     "test:users": "tsx scripts/test-users.ts",
+    "test:roles-comprehensive": "tsx scripts/comprehensive-role-test.ts",
+    "test:roles-simple": "tsx scripts/test-role-system-simple.ts",
+    "fix:security": "tsx scripts/fix-rls-security.ts",
     "setup:users": "tsx scripts/setup-users.ts", 
     "check:database": "tsx scripts/check-database.ts",
     "inspect:database": "tsx scripts/inspect-real-database.ts",
@@ -35,7 +38,13 @@
     "final:setup": "tsx scripts/final-working-setup.ts",
     "bypass:rls": "tsx scripts/bypass-rls-test.ts",
     "fix:credentials": "tsx scripts/fix-all-credentials.ts",
-    "test:production": "npm run check:database && npm run setup:users && npm run test:users"
+    "test:production": "npm run check:database && npm run setup:users && npm run test:users",
+    "health:check": "tsx scripts/production-health-check.ts",
+    "fix:critical": "npm run build && npm run health:check",
+    "test:frontend": "tsx scripts/test-frontend-components.ts",
+    "audit:frontend": "tsx scripts/audit-frontend-consistency.ts",
+    "optimize:3d": "tsx scripts/optimize-3d-effects.ts",
+    "fix:logos": "tsx scripts/fix-all-logo-fallbacks.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

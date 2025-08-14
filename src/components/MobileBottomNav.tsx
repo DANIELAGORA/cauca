@@ -9,7 +9,8 @@ import {
   Megaphone,
   Calendar,
   Database,
-  Heart
+  Heart,
+  UserCircle
 } from 'lucide-react';
 
 interface MobileBottomNavProps {
@@ -27,6 +28,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onNavigate, ac
       { id: 'dashboard', icon: Home, label: 'Inicio' },
       { id: 'analytics', icon: BarChart3, label: 'Análisis' },
       { id: 'messages', icon: MessageCircle, label: 'Mensajes' },
+      { id: 'profile', icon: UserCircle, label: 'Perfil' }, // CRÍTICO: Acceso a perfil para todos
     ];
 
     // Navegación específica por rol
@@ -34,48 +36,42 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onNavigate, ac
       case 'comite-ejecutivo-nacional':
         return [
           ...baseItems,
-          { id: 'campaigns', icon: Megaphone, label: 'Campañas' },
-          { id: 'settings', icon: Settings, label: 'Config' }
+          { id: 'campaigns', icon: Megaphone, label: 'Campañas' }
         ];
       
       case 'lider-regional':
       case 'comite-departamental':
         return [
           ...baseItems,
-          { id: 'territory', icon: Users, label: 'Territorio' },
-          { id: 'calendar', icon: Calendar, label: 'Agenda' }
+          { id: 'territory', icon: Users, label: 'Territorio' }
         ];
       
       case 'candidato':
         return [
           ...baseItems,
-          { id: 'campaign-tools', icon: Megaphone, label: 'Campaña' },
-          { id: 'schedule', icon: Calendar, label: 'Agenda' }
+          { id: 'campaign-tools', icon: Megaphone, label: 'Campaña' }
         ];
       
       case 'influenciador':
         return [
           ...baseItems,
-          { id: 'content', icon: Megaphone, label: 'Contenido' },
-          { id: 'social', icon: Heart, label: 'Social' }
+          { id: 'content', icon: Megaphone, label: 'Contenido' }
         ];
       
       case 'lider':
         return [
           ...baseItems,
-          { id: 'community', icon: Users, label: 'Comunidad' },
-          { id: 'events', icon: Calendar, label: 'Eventos' }
+          { id: 'community', icon: Users, label: 'Comunidad' }
         ];
       
       case 'ciudadano-base':
         return [
           ...baseItems,
-          { id: 'participation', icon: Heart, label: 'Participar' },
-          { id: 'info', icon: Database, label: 'Info' }
+          { id: 'participation', icon: Heart, label: 'Participar' }
         ];
       
       default:
-        return baseItems.slice(0, 4);
+        return baseItems; // Todos los usuarios tienen acceso a perfil
     }
   };
 

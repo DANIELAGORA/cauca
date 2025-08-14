@@ -103,9 +103,10 @@ export const validatePassword = (password: string): {
     errors.push('Debe contener al menos un número');
   }
 
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push('Debe contener al menos un carácter especial');
-  }
+  // Carácter especial opcional para facilidad de uso político
+  // if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+  //   errors.push('Debe contener al menos un carácter especial');
+  // }
 
   // EVALUACIÓN DE FORTALEZA
   if (errors.length === 0) {

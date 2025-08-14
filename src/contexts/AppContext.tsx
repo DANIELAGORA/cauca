@@ -3,7 +3,7 @@ import { User, UserRole, Message, Campaign, DatabaseEntry, Analytics, CampaignFi
 import { supabase } from '../lib/supabase';
 import { logError, logInfo } from '../utils/logger';
 import { getUserDataNetwork, canUserCreateRole, getRolesUserCanCreate, createUserWithHierarchy, DATA_PROTECTION, HIERARCHY_LEVELS } from '../utils/hierarchy';
-import { getTodosLosElectos, MASTER_PASSWORD } from '../data/estructura-jerarquica-completa';
+import { getTodosLosElectos, generateTemporaryPassword } from '../data/estructura-jerarquica-completa';
 
 interface AppState {
   user: User | null;
@@ -87,28 +87,68 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   useEffect(() => {
     const initializeApp = async () => {
+      // Set timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        logError('App initialization timeout - forcing completion');
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }, 10000); // 10 second timeout
+
       try {
         dispatch({ type: 'SET_LOADING', payload: true });
+        logInfo('Starting app initialization...');
 
-        // Check for existing session
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // Check for existing session with timeout
+        const sessionPromise = supabase.auth.getSession();
+        const { data: { session }, error } = await Promise.race([
+          sessionPromise,
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Session timeout')), 5000)
+          )
+        ]);
         
         if (error) {
           logError('Session check failed:', error);
+          // Continue without session - don't block app
         }
 
         if (session?.user) {
-          await loadUserProfile(session.user.id);
-          await loadUserData();
+          logInfo('User session found, loading profile...');
+          try {
+            await Promise.race([
+              loadUserProfile(session.user.id),
+              new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Profile load timeout')), 3000)
+              )
+            ]);
+            await Promise.race([
+              loadUserData(),
+              new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Data load timeout')), 3000)
+              )
+            ]);
+          } catch (profileError) {
+            logError('Profile/Data loading failed:', profileError);
+            // Continue - don't block app for profile issues
+          }
+        } else {
+          logInfo('No user session - app ready for authentication');
         }
 
-        // Set up real-time subscriptions
-        setupRealtimeSubscriptions();
+        // Set up real-time subscriptions (non-blocking)
+        try {
+          setupRealtimeSubscriptions();
+          logInfo('Real-time subscriptions setup complete');
+        } catch (realtimeError) {
+          logError('Real-time setup failed:', realtimeError);
+          // Continue - real-time is not critical for initial load
+        }
 
+        clearTimeout(timeoutId);
         dispatch({ type: 'SET_LOADING', payload: false });
-        logInfo('App initialized with Supabase');
+        logInfo('App initialization completed successfully');
       } catch (error) {
         logError('App initialization failed:', error);
+        clearTimeout(timeoutId);
         dispatch({ type: 'SET_LOADING', payload: false });
       }
     };
@@ -634,10 +674,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
       // Intentar crear en Supabase
       try {
+        // Generar contraseña temporal segura para nuevos usuarios
+        const temporaryPassword = generateTemporaryPassword();
+        
         const { error } = await supabase.auth.signUp({
           email: userData.email,
-          password: MASTER_PASSWORD, // Usar contraseña maestra para nuevos usuarios
+          password: temporaryPassword, // Contraseña temporal única
         });
+
+        if (!error) {
+          // Mostrar contraseña temporal al administrador (una sola vez)
+          alert(`✅ Usuario creado exitosamente\n\n📧 Email: ${userData.email}\n🔐 Contraseña temporal: ${temporaryPassword}\n\n⚠️ IMPORTANTE: El usuario debe cambiar esta contraseña en su primer acceso.`);
+          logInfo(`Usuario subordinado creado con contraseña temporal: ${userData.email}`);
+        }
 
         if (error) {
           logError('Error creating subordinate user:', error);

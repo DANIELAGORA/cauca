@@ -137,10 +137,11 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      injectRegister: 'script-defer',
       devOptions: {
-        enabled: true
+        enabled: false
       },
+      strategies: 'generateSW',
       workbox: {
         clientsClaim: true,
         skipWaiting: true,

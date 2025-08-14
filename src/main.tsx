@@ -4,17 +4,10 @@ import App from './App.tsx';
 import './index.css';
 import { logInfo, logError } from './utils/logger';
 
-// Registrar el Service Worker para PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js') // sw.js será generado por vite-plugin-pwa
-      .then(registration => {
-        logInfo('Service Worker registrado con éxito:', registration);
-      })
-      .catch(error => {
-        logError('Fallo el registro del Service Worker:', error);
-      });
-  });
+// Service Worker registration será manejado por vite-plugin-pwa automáticamente
+// No registrar manualmente para evitar conflictos
+if ('serviceWorker' in navigator && import.meta.env.DEV) {
+  logInfo('Service Worker será registrado automáticamente por vite-plugin-pwa');
 }
 
 createRoot(document.getElementById('root')!).render(
