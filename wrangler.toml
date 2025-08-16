@@ -1,0 +1,10 @@
+# Top-level configuration for the Cloudflare Pages deployment
+name = "agoraserver"
+compatibility_date = "2025-08-16"
+
+# The directory containing the built assets of the frontend
+pages_build_output_dir = "./dist"
+
+# Environment variables available to the Worker functions
+[vars]
+SUPABASE_URL = "https://bpzebjejbwjipdfjaxbw.supabase.co/rest/v1"
