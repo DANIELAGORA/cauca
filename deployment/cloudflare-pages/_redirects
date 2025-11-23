@@ -1,0 +1,9 @@
+# API Routes - Redirect to local server
+/api/* https://tu-pc-servidor.local:3001/api/:splat 200!
+
+# SPA Routes - Handle React Router
+/* /index.html 200
+
+# Security redirects
+http://maiscauca.netlify.app/* https://maiscauca.netlify.app/:splat 301!
+http://mais-cauca.pages.dev/* https://mais-cauca.pages.dev/:splat 301!

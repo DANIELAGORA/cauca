@@ -1,4 +1,4 @@
-// CONFIGURACIÓN DE SUPABASE CLIENT
+// CONFIGURACIÓN DE SUPABASE CLIENT - RETROCOMPATIBLE
 // Cliente centralizado para todas las operaciones de base de datos
 
 import { createClient } from '@supabase/supabase-js';
@@ -11,7 +11,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // VALIDACIÓN ESTRICTA SIN FALLBACKS HARDCODEADOS
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('❌ ERROR CRÍTICO DE SEGURIDAD: Variables de entorno VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY son obligatorias.');
-  console.error('🔧 CONFIGURACIÓN REQUERIDA EN NETLIFY:');
+  console.error('🔧 CONFIGURACIÓN REQUERIDA EN CLOUDFLARE PAGES:');
   console.error('   VITE_SUPABASE_URL=https://djgkjtqpzedxnqwqdcjx.supabase.co');
   console.error('   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...');
   throw new Error('Variables de entorno Supabase requeridas para funcionamiento seguro');

@@ -1,0 +1,81 @@
+version: '3.9'
+
+services:
+  # API Gateway Local
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3001:3001"
+    environment:
+      - OLLAMA_HOST=ollama
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+      - NODE_ENV=production
+    depends_on:
+      - postgres
+      - redis
+      - ollama
+    restart: unless-stopped
+    mem_limit: 512m
+
+  # Ollama Code LLM Service
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    restart: unless-stopped
+    mem_limit: 2.5g
+    deploy:
+      resources:
+        limits:
+          memory: 2.5g
+
+  # PostgreSQL Local Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: mais_local
+      POSTGRES_USER: mais_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    mem_limit: 512m
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    mem_limit: 256m
+
+  # Cloudflared Tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+    mem_limit: 128m
+
+volumes:
+  ollama-data:
+  postgres-data:
+  redis-data:
+
+networks:
+  default:
+    driver: bridge

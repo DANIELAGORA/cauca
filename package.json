@@ -30,7 +30,7 @@
     "test:roles-comprehensive": "tsx scripts/comprehensive-role-test.ts",
     "test:roles-simple": "tsx scripts/test-role-system-simple.ts",
     "fix:security": "tsx scripts/fix-rls-security.ts",
-    "setup:users": "tsx scripts/setup-users.ts", 
+    "setup:users": "tsx scripts/setup-users.ts",
     "check:database": "tsx scripts/check-database.ts",
     "inspect:database": "tsx scripts/inspect-real-database.ts",
     "discover:structure": "tsx scripts/discover-table-structure.ts",
@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "@supabase/supabase-js": "^2.53.0",
+    "@supabase/supabase-js": "^2.84.0",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.534.0",
     "react": "^18.3.1",
